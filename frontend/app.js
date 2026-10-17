@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadSettings();
     loadHistory();
     fetchNext10AM();
+    initAntigravityPhysics();
 
     // Auto-parse on paste or input after 600ms debounce
     let debounceTimer;
@@ -26,6 +27,28 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+// Antigravity 3D Tilt & Weightless Physics on cards
+function initAntigravityPhysics() {
+    const cards = document.querySelectorAll('.antigravity-card');
+    cards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const rotateX = ((y - centerY) / centerY) * -3.2;
+            const rotateY = ((x - centerX) / centerX) * 3.2;
+            
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-2px)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+        });
+    });
+}
+
 async function fetchNext10AM() {
     try {
         const res = await fetch("/api/default-schedule-time");
@@ -36,7 +59,7 @@ async function fetchNext10AM() {
     }
 }
 
-// Tab switching
+// Tab switching (Apple-style dark segmented control)
 function switchTab(tabName) {
     const tabs = ["outreach", "history", "settings"];
     tabs.forEach(t => {
@@ -44,10 +67,10 @@ function switchTab(tabName) {
         const btn = document.getElementById(`tab-btn-${t}`);
         if (t === tabName) {
             section.classList.remove("hidden");
-            btn.className = "px-3 py-1.5 rounded-md font-medium text-slate-900 bg-white shadow-sm flex items-center gap-1.5 transition";
+            btn.className = "px-3.5 py-1.5 rounded-lg font-semibold text-white bg-white/[0.12] shadow-sm border border-white/[0.15] flex items-center gap-1.5 transition-all";
         } else {
             section.classList.add("hidden");
-            btn.className = "px-3 py-1.5 rounded-md font-medium text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition";
+            btn.className = "px-3.5 py-1.5 rounded-lg font-medium text-zinc-400 hover:text-white flex items-center gap-1.5 transition-all";
         }
     });
 
@@ -68,14 +91,14 @@ function setPreviewMode(mode) {
     if (mode === "visual") {
         visualContainer.classList.remove("hidden");
         editContainer.classList.add("hidden");
-        btnVisual.className = "px-2.5 py-1 rounded-md bg-white text-slate-800 shadow-xs flex items-center gap-1 transition";
-        btnEdit.className = "px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-800 flex items-center gap-1 transition";
+        btnVisual.className = "px-3 py-1.5 rounded-lg bg-white/[0.12] text-white border border-white/[0.15] shadow-xs flex items-center gap-1.5 transition-all";
+        btnEdit.className = "px-3 py-1.5 rounded-lg text-zinc-400 hover:text-white border border-transparent flex items-center gap-1.5 transition-all";
         updateVisualPreviewFromEditor();
     } else {
         visualContainer.classList.add("hidden");
         editContainer.classList.remove("hidden");
-        btnEdit.className = "px-2.5 py-1 rounded-md bg-white text-slate-800 shadow-xs flex items-center gap-1 transition";
-        btnVisual.className = "px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-800 flex items-center gap-1 transition";
+        btnEdit.className = "px-3 py-1.5 rounded-lg bg-white/[0.12] text-white border border-white/[0.15] shadow-xs flex items-center gap-1.5 transition-all";
+        btnVisual.className = "px-3 py-1.5 rounded-lg text-zinc-400 hover:text-white border border-transparent flex items-center gap-1.5 transition-all";
     }
     lucide.createIcons();
 }
@@ -84,7 +107,7 @@ function updateVisualPreviewFromEditor() {
     const raw = document.getElementById("email-body").value;
     const box = document.getElementById("visual-preview-content");
     if (!raw.trim()) {
-        box.innerHTML = `<span class="text-slate-400 italic">No email draft generated yet. Paste a LinkedIn post or email on the left.</span>`;
+        box.innerHTML = `<span class="text-zinc-500 italic">Your personalized email will appear here...</span>`;
         return;
     }
 
@@ -115,26 +138,34 @@ function wrapSelectionWithBold() {
     updateVisualPreviewFromEditor();
 }
 
-// Toast notification helper
+// Toast notification helper with Apple frosted pill design
 function showToast(message, type = "info") {
     const container = document.getElementById("toast-container");
     const toast = document.createElement("div");
     
-    let bg = "bg-slate-800 text-white";
+    let border = "border-white/10";
     let icon = "info";
+    let iconColor = "text-cyan-400";
     if (type === "success") {
-        bg = "bg-emerald-600 text-white";
-        icon = "check-circle";
+        border = "border-emerald-500/30";
+        icon = "check-circle-2";
+        iconColor = "text-emerald-400";
     } else if (type === "error") {
-        bg = "bg-red-600 text-white";
+        border = "border-rose-500/30";
         icon = "alert-circle";
+        iconColor = "text-rose-400";
     }
 
-    toast.className = `${bg} px-4 py-3 rounded-xl shadow-lg text-xs font-semibold flex items-center gap-2 transform transition-all duration-300 translate-y-2 pointer-events-auto`;
-    toast.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4"></i><span>${message}</span>`;
+    toast.className = `bg-zinc-900/90 backdrop-blur-2xl text-zinc-100 border ${border} shadow-[0_15px_40px_rgba(0,0,0,0.8)] px-4 py-3 rounded-2xl text-xs font-medium flex items-center gap-2.5 transform transition-all duration-300 translate-y-2 pointer-events-auto`;
+    toast.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 ${iconColor} flex-shrink-0"></i><span>${message}</span>`;
     
     container.appendChild(toast);
     lucide.createIcons();
+
+    setTimeout(() => {
+        toast.classList.remove("translate-y-2");
+        toast.classList.add("translate-y-0");
+    }, 10);
 
     setTimeout(() => {
         toast.classList.add("opacity-0", "translate-y-[-10px]");
@@ -152,9 +183,9 @@ function clearInput() {
     document.getElementById("field-exp").value = "";
     document.getElementById("email-subject").value = "";
     document.getElementById("email-body").value = "";
-    document.getElementById("visual-preview-content").innerHTML = `<span class="text-slate-400 italic">Your personalized email will appear here...</span>`;
+    document.getElementById("visual-preview-content").innerHTML = `<span class="text-zinc-500 italic">Your personalized email will appear here...</span>`;
     document.getElementById("detected-mode-badge").textContent = "Ready";
-    document.getElementById("detected-mode-badge").className = "text-[11px] font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-600";
+    document.getElementById("detected-mode-badge").className = "text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-white/10 text-zinc-400 border border-white/10";
     
     document.getElementById("single-studio-box").classList.remove("hidden");
     document.getElementById("batch-studio-box").classList.add("hidden");
@@ -191,7 +222,7 @@ async function processInput(showToastNotice = true) {
                 if (showToastNotice) showToast(`Batch Mode: Detected ${parsed.batch_count} recruiter emails!`, "success");
             } else {
                 renderSingleMode(parsed, data.draft);
-                if (showToastNotice) showToast("Email draft generated with genuine bold styling!", "success");
+                if (showToastNotice) showToast("Email draft generated with genuine bold highlights!", "success");
             }
 
             // Resume info
@@ -222,11 +253,11 @@ function renderSingleMode(parsed, draft) {
 
     const badge = document.getElementById("detected-mode-badge");
     if (parsed.mode === "plain_email") {
-        badge.textContent = "Default Mode: Software Engineer";
-        badge.className = "text-[11px] font-semibold px-2 py-0.5 rounded bg-purple-100 text-purple-700";
+        badge.textContent = "Default: Software Engineer";
+        badge.className = "text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/30";
     } else {
         badge.textContent = `Role: ${parsed.role}`;
-        badge.className = "text-[11px] font-semibold px-2 py-0.5 rounded bg-blue-100 text-blue-700";
+        badge.className = "text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30";
     }
 
     if (draft) {
@@ -245,17 +276,17 @@ function renderBatchMode(parsed) {
 
     const badge = document.getElementById("detected-mode-badge");
     badge.textContent = `Bulk Mode (${parsed.batch_count} Emails)`;
-    badge.className = "text-[11px] font-semibold px-2.5 py-0.5 rounded bg-indigo-100 text-indigo-800";
+    badge.className = "text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30";
 
     const tbody = document.getElementById("batch-table-body");
     tbody.innerHTML = currentBatchItems.map((item, idx) => `
-        <tr class="hover:bg-slate-50 transition">
-          <td class="p-2.5 font-mono text-slate-400">${idx + 1}</td>
-          <td class="p-2.5 font-semibold text-slate-800">${item.recruiter_email}</td>
-          <td class="p-2.5 text-slate-600">${item.recruiter_name || "-"}</td>
-          <td class="p-2.5 text-slate-700 font-medium">${item.company || "-"}</td>
-          <td class="p-2.5 text-right">
-            <button onclick="viewBatchItemDraft(${idx})" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-[11px] font-medium transition">
+        <tr class="hover:bg-white/[0.03] transition border-b border-white/[0.05]">
+          <td class="p-3 font-mono text-zinc-500">${idx + 1}</td>
+          <td class="p-3 font-semibold text-white">${item.recruiter_email}</td>
+          <td class="p-3 text-zinc-400">${item.recruiter_name || "-"}</td>
+          <td class="p-3 text-zinc-300 font-medium">${item.company || "-"}</td>
+          <td class="p-3 text-right">
+            <button onclick="viewBatchItemDraft(${idx})" class="px-2.5 py-1 bg-white/[0.06] hover:bg-white/[0.12] text-zinc-200 rounded-lg text-[11px] font-medium border border-white/[0.08] transition">
               Preview
             </button>
           </td>
@@ -655,12 +686,12 @@ async function checkSmtpStatus() {
         const banner = document.getElementById("smtp-warning-banner");
 
         if (s.has_app_password) {
-            badge.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200";
-            badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>Gmail Configured</span>`;
+            badge.className = "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)]";
+            badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span><span>Gmail Configured</span>`;
             banner.classList.add("hidden");
         } else {
-            badge.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200 cursor-pointer";
-            badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span><span>Setup Gmail Password</span>`;
+            badge.className = "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-300 border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.15)] cursor-pointer hover:bg-amber-500/20 transition";
+            badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span><span>Setup Gmail Password</span>`;
             banner.classList.remove("hidden");
         }
     } catch (e) {
@@ -699,9 +730,9 @@ async function loadSettings() {
     try {
         const res = await fetch("/api/settings");
         const s = await res.json();
-        document.getElementById("setting-sender-email").value = s.sender_email || "vibhudixit88@gmail.com";
-        document.getElementById("setting-name").value = s.sender_name || "Vibhu Dixit";
-        document.getElementById("setting-phone").value = s.sender_phone || "+91 7500211114";
+        document.getElementById("setting-sender-email").value = s.sender_email || "harsh19singh98@gmail.com";
+        document.getElementById("setting-name").value = s.sender_name || "Harsh Kumar Singh";
+        document.getElementById("setting-phone").value = s.sender_phone || "";
         document.getElementById("setting-linkedin").value = s.linkedin_url || "";
         document.getElementById("setting-company").value = s.current_company || "";
         if (s.has_app_password) {
@@ -759,8 +790,8 @@ async function testSmtpConnection() {
 
     const resultBox = document.getElementById("smtp-test-result");
     resultBox.classList.remove("hidden");
-    resultBox.className = "p-3 rounded-lg text-xs bg-slate-100 text-slate-700 flex items-center gap-2";
-    resultBox.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Testing connection to smtp.gmail.com...`;
+    resultBox.className = "p-3.5 rounded-xl text-xs bg-zinc-900 border border-white/10 text-zinc-300 flex items-center gap-2";
+    resultBox.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin text-cyan-400"></i> Testing connection to smtp.gmail.com...`;
     lucide.createIcons();
 
     try {
@@ -772,15 +803,15 @@ async function testSmtpConnection() {
         const data = await res.json();
 
         if (data.success) {
-            resultBox.className = "p-3 rounded-lg text-xs bg-emerald-50 text-emerald-800 border border-emerald-200";
+            resultBox.className = "p-3.5 rounded-xl text-xs bg-emerald-500/10 text-emerald-300 border border-emerald-500/20";
             resultBox.innerHTML = `<strong>✓ Success:</strong> ${data.message}`;
             checkSmtpStatus();
         } else {
-            resultBox.className = "p-3 rounded-lg text-xs bg-red-50 text-red-800 border border-red-200";
+            resultBox.className = "p-3.5 rounded-xl text-xs bg-rose-500/10 text-rose-300 border border-rose-500/20";
             resultBox.innerHTML = `<strong>✗ Connection Failed:</strong> ${data.message}`;
         }
     } catch (err) {
-        resultBox.className = "p-3 rounded-lg text-xs bg-red-50 text-red-800";
+        resultBox.className = "p-3.5 rounded-xl text-xs bg-rose-500/10 text-rose-300 border border-rose-500/20";
         resultBox.innerHTML = `Error contacting server.`;
     }
 }
@@ -841,8 +872,8 @@ function renderHistoryTable(items) {
     if (!items.length) {
         tbody.innerHTML = `
             <tr>
-              <td colspan="6" class="p-8 text-center text-slate-400">
-                <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+              <td colspan="6" class="p-8 text-center text-zinc-500">
+                <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 opacity-50 text-zinc-600"></i>
                 No job applications sent yet. Sent applications will be logged here automatically!
               </td>
             </tr>
@@ -854,45 +885,45 @@ function renderHistoryTable(items) {
     tbody.innerHTML = items.map(item => {
         let statusBadge = "";
         let actionButtons = `
-            <button onclick="viewHistoryDetail(${item.id})" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-[11px] font-medium transition">
+            <button onclick="viewHistoryDetail(${item.id})" class="px-2.5 py-1 bg-white/[0.06] hover:bg-white/[0.12] text-zinc-200 rounded-lg text-[11px] font-medium border border-white/[0.08] transition">
               View
             </button>
-            <button onclick="deleteHistoryItem(${item.id})" class="px-2 py-1 hover:bg-red-50 text-red-600 rounded text-[11px] font-medium transition">
+            <button onclick="deleteHistoryItem(${item.id})" class="px-2.5 py-1 hover:bg-rose-500/20 text-rose-400 rounded-lg text-[11px] font-medium border border-rose-500/20 transition">
               Delete
             </button>
         `;
 
         if (item.status === "SCHEDULED") {
             statusBadge = `
-                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
-                  <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
                   SCHEDULED &bull; ${item.scheduled_for}
                 </span>
             `;
             actionButtons = `
-                <button onclick="viewHistoryDetail(${item.id})" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-[11px] font-medium transition">
+                <button onclick="viewHistoryDetail(${item.id})" class="px-2.5 py-1 bg-white/[0.06] hover:bg-white/[0.12] text-zinc-200 rounded-lg text-[11px] font-medium border border-white/[0.08] transition">
                   View
                 </button>
-                <button onclick="cancelScheduledItem(${item.id})" class="px-2 py-1 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded text-[11px] font-bold transition">
+                <button onclick="cancelScheduledItem(${item.id})" class="px-2.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded-lg text-[11px] font-bold border border-amber-500/30 transition">
                   Cancel
                 </button>
             `;
         } else if (item.status === "SENT") {
-            statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">SENT</span>`;
+            statusBadge = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">SENT</span>`;
         } else if (item.status === "CANCELLED") {
-            statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-slate-600">CANCELLED</span>`;
+            statusBadge = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-zinc-800 text-zinc-400 border border-white/10">CANCELLED</span>`;
         } else {
-            statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-800" title="${item.error_message || ''}">FAILED</span>`;
+            statusBadge = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20" title="${item.error_message || ''}">FAILED</span>`;
         }
 
         return `
-            <tr class="hover:bg-slate-50/70 transition">
-              <td class="p-3 font-mono text-slate-500">${item.sent_at}</td>
-              <td class="p-3 font-semibold text-slate-900">${item.recruiter_email}</td>
-              <td class="p-3 font-medium text-slate-700">${item.company || "-"}</td>
-              <td class="p-3 text-slate-600">${item.role || "-"}</td>
-              <td class="p-3">${statusBadge}</td>
-              <td class="p-3 text-right space-x-1">${actionButtons}</td>
+            <tr class="hover:bg-white/[0.03] transition border-b border-white/[0.05]">
+              <td class="p-3.5 font-mono text-zinc-400">${item.sent_at}</td>
+              <td class="p-3.5 font-semibold text-white">${item.recruiter_email}</td>
+              <td class="p-3.5 font-medium text-zinc-300">${item.company || "-"}</td>
+              <td class="p-3.5 text-zinc-400">${item.role || "-"}</td>
+              <td class="p-3.5">${statusBadge}</td>
+              <td class="p-3.5 text-right space-x-1.5">${actionButtons}</td>
             </tr>
         `;
     }).join("");

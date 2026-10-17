@@ -18,7 +18,7 @@ def open_browser():
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("🚀 Starting LinkedIn Job Mail Automator for Vibhu Dixit...")
+    print("🚀 Starting JobwalaAI - Mail Automator for Harsh Kumar Singh...")
     print("🌐 Opening: http://127.0.0.1:8000")
     print("=" * 60)
     threading.Thread(target=open_browser, daemon=True).start()

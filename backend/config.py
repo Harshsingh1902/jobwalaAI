@@ -6,40 +6,32 @@ from typing import Dict, Any
 BASE_DIR = Path(__file__).resolve().parent.parent
 SETTINGS_FILE = BASE_DIR / "settings.json"
 RESUMES_DIR = BASE_DIR / "resumes"
-DEFAULT_RESUME_NAME = "VibhuDixit_Resume.pdf"
+DEFAULT_RESUME_NAME = "HarshKumarSingh_Resume.pdf"
 
 DEFAULT_SETTINGS: Dict[str, Any] = {
-    "sender_name": "Vibhu Dixit",
-    "sender_email": "vibhudixit88@gmail.com",
-    "sender_phone": "+91 7500211114",
-    "linkedin_url": "https://www.linkedin.com/in/vibhu-dixit-b42a11251/",
+    "sender_name": "Harsh Kumar Singh",
+    "sender_email": "harsh19singh98@gmail.com",
+    "sender_phone": "",
+    "linkedin_url": "",
     "smtp_server": "smtp.gmail.com",
     "smtp_port": 587,
-    "gmail_app_password": "nmqf rqct hgvp nbpr",
-    "current_company": "Meridian Solutions Pvt. Ltd. (Microsoft Gold Partner)",
-    "current_experience": "1 year",
-    "education": "B.Tech in Computer Science from GLA University",
-    "certifications": [
-        "AZ-900",
-        "AZ-104",
-        "AZ-500",
-        "SC-200",
-        "SC-300",
-        "SC-401"
-    ],
+    "gmail_app_password": "",
+    "current_company": "Software Engineering",
+    "current_experience": "1+ years",
+    "education": "B.Tech in Computer Science",
+    "certifications": [],
     "core_skills": [
+        "Python",
+        "FastAPI",
         "JavaScript",
         "React.js",
         "Node.js",
-        "Python",
         "SQL",
         "Generative AI",
         "LLMs",
         "RAG",
         "LangChain",
-        "FastAPI",
-        "Flask",
-        "Cloud Technologies (Azure)",
+        "Cloud Technologies",
         "API Integration"
     ],
     "resume_filename": DEFAULT_RESUME_NAME,

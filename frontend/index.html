@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LinkedIn Job Mail Automator - Vibhu Dixit</title>
+  <title>JobwalaAI - Intelligent Job Outreach Automator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
@@ -13,13 +16,39 @@
       darkMode: 'class',
       theme: {
         extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"Segoe UI"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+          },
           colors: {
-            brand: {
-              50: '#eff6ff',
-              100: '#dbeafe',
-              500: '#3b82f6',
-              600: '#2563eb',
-              700: '#1d4ed8',
+            space: {
+              950: '#030305',
+              900: '#08080d',
+              850: '#0e0e16',
+              800: '#141420',
+              700: '#202030',
+            },
+            neon: {
+              cyan: '#38bdf8',
+              indigo: '#6366f1',
+              violet: '#a855f7',
+              emerald: '#10b981',
+              amber: '#f59e0b',
+            }
+          },
+          animation: {
+            'float': 'antigravityFloat 7s ease-in-out infinite',
+            'float-slow': 'antigravityFloat 10s ease-in-out infinite',
+            'pulse-glow': 'pulseGlow 4s ease-in-out infinite',
+          },
+          keyframes: {
+            antigravityFloat: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-6px)' },
+            },
+            pulseGlow: {
+              '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
+              '50%': { opacity: '0.8', transform: 'scale(1.05)' },
             }
           }
         }
@@ -27,180 +56,250 @@
     }
   </script>
   <style>
-    /* Native Gmail View simulation */
+    /* Antigravity Glassmorphism & Depth */
+    body {
+      background-color: #030305;
+      color: #f1f5f9;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 60%),
+        radial-gradient(circle at 10% 40%, rgba(99, 102, 241, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 90% 70%, rgba(168, 85, 247, 0.05) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    .antigravity-card {
+      background: rgba(14, 14, 22, 0.7);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8),
+                  inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.3s ease,
+                  box-shadow 0.3s ease;
+      will-change: transform;
+    }
+
+    .antigravity-card:hover {
+      border-color: rgba(255, 255, 255, 0.18);
+      box-shadow: 0 35px 70px -15px rgba(0, 0, 0, 0.9),
+                  0 0 40px -10px rgba(56, 189, 248, 0.15),
+                  inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+    }
+
+    .antigravity-glass {
+      background: rgba(18, 18, 28, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    /* Native Gmail View simulation (Apple dark mode edition) */
     .gmail-preview-box {
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 14px;
-      color: #222222;
-      line-height: 1.5;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 13.5px;
+      color: #e2e8f0;
+      line-height: 1.65;
       text-align: left;
     }
     .gmail-preview-box a {
-      color: #1155cc;
+      color: #38bdf8;
       text-decoration: underline;
     }
     .gmail-preview-box b, .gmail-preview-box strong {
       font-weight: 700;
-      color: #111111;
+      color: #ffffff;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.3);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen font-sans antialiased flex flex-col">
+<body class="min-h-screen font-sans antialiased flex flex-col selection:bg-cyan-500/30 selection:text-cyan-200">
 
-  <!-- Top Navigation Header -->
-  <header class="border-b border-slate-200 bg-white sticky top-0 z-30 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
-          <i data-lucide="send" class="w-5 h-5"></i>
+  <!-- Ambient Light Orbs -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[900px] h-[450px] bg-gradient-to-b from-cyan-500/10 via-indigo-600/10 to-transparent blur-[120px] rounded-full animate-pulse-glow"></div>
+    <div class="absolute top-1/3 -left-40 w-[550px] h-[550px] bg-purple-600/10 blur-[140px] rounded-full pointer-events-none"></div>
+    <div class="absolute bottom-20 -right-40 w-[600px] h-[600px] bg-blue-600/10 blur-[150px] rounded-full pointer-events-none"></div>
+  </div>
+
+  <!-- Top Apple-Style Floating Navigation Header -->
+  <header class="sticky top-0 z-30 backdrop-blur-2xl bg-black/60 border-b border-white/[0.08]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between relative z-10">
+      
+      <!-- Brand & Pro Badge -->
+      <div class="flex items-center space-x-3.5">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-[0_0_20px_rgba(56,189,248,0.35)]">
+          <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
         </div>
         <div>
-          <h1 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-            Job Mail Automator
-            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">Pro</span>
-          </h1>
-          <p class="text-xs text-slate-500">Automated LinkedIn Outreach for Vibhu Dixit</p>
+          <div class="flex items-center gap-2">
+            <span class="text-base font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+              JobwalaAI
+            </span>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 tracking-wide uppercase">
+              Antigravity
+            </span>
+          </div>
+          <p class="text-[11px] text-zinc-400 font-medium">Outreach Automator &bull; Harsh Kumar Singh</p>
         </div>
       </div>
 
-      <!-- Quick Status Indicators -->
+      <!-- Quick Status Indicators & Tab Pills -->
       <div class="flex items-center space-x-3">
         <!-- SMTP Status Badge -->
-        <div id="smtp-badge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200 cursor-pointer" onclick="switchTab('settings')">
-          <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+        <div id="smtp-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-300 border border-amber-500/20 cursor-pointer shadow-[0_0_15px_rgba(245,158,11,0.15)] transition hover:bg-amber-500/20" onclick="switchTab('settings')">
+          <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
           <span id="smtp-status-text">Checking SMTP...</span>
         </div>
 
         <!-- Resume Status Badge -->
-        <div id="resume-badge" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-          <i data-lucide="file-check" class="w-3.5 h-3.5"></i>
-          <span id="resume-status-text">Resume Attached</span>
+        <div id="resume-badge" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
+          <i data-lucide="file-check" class="w-3.5 h-3.5 text-emerald-400"></i>
+          <span id="resume-status-text">Resume Ready</span>
         </div>
 
-        <!-- Navigation Tabs -->
-        <nav class="flex space-x-1 bg-slate-100 p-1 rounded-lg text-sm">
-          <button onclick="switchTab('outreach')" id="tab-btn-outreach" class="px-3 py-1.5 rounded-md font-medium text-slate-900 bg-white shadow-sm flex items-center gap-1.5 transition">
-            <i data-lucide="sparkles" class="w-4 h-4 text-blue-600"></i> Outreach
+        <!-- Navigation Tabs (Apple Segmented Glass Control) -->
+        <nav class="flex space-x-1 bg-zinc-900/80 p-1 rounded-xl border border-white/10 text-xs shadow-inner">
+          <button onclick="switchTab('outreach')" id="tab-btn-outreach" class="px-3.5 py-1.5 rounded-lg font-semibold text-white bg-white/[0.12] shadow-sm border border-white/[0.15] flex items-center gap-1.5 transition-all">
+            <i data-lucide="send" class="w-3.5 h-3.5 text-cyan-400"></i> Outreach
           </button>
-          <button onclick="switchTab('history')" id="tab-btn-history" class="px-3 py-1.5 rounded-md font-medium text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition">
-            <i data-lucide="clock" class="w-4 h-4 text-slate-500"></i> History & Queue
+          <button onclick="switchTab('history')" id="tab-btn-history" class="px-3.5 py-1.5 rounded-lg font-medium text-zinc-400 hover:text-white flex items-center gap-1.5 transition-all">
+            <i data-lucide="clock" class="w-3.5 h-3.5"></i> Queue & Logs
           </button>
-          <button onclick="switchTab('settings')" id="tab-btn-settings" class="px-3 py-1.5 rounded-md font-medium text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition">
-            <i data-lucide="settings" class="w-4 h-4 text-slate-500"></i> Settings
+          <button onclick="switchTab('settings')" id="tab-btn-settings" class="px-3.5 py-1.5 rounded-lg font-medium text-zinc-400 hover:text-white flex items-center gap-1.5 transition-all">
+            <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Settings
           </button>
         </nav>
       </div>
+
     </div>
   </header>
 
-  <!-- Global Toast / Alert -->
+  <!-- Global Floating Toast Container -->
   <div id="toast-container" class="fixed top-20 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
   <!-- Main Content Area -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full relative z-10">
 
     <!-- ==================== TAB 1: OUTREACH STUDIO ==================== -->
     <section id="tab-outreach" class="space-y-6">
       
-      <!-- Top instruction banner for first-time / App password note -->
-      <div id="smtp-warning-banner" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start justify-between shadow-sm">
+      <!-- Top Instruction / Warning Banner -->
+      <div id="smtp-warning-banner" class="hidden antigravity-card rounded-2xl p-4 border border-amber-500/30 bg-amber-500/10 flex items-start justify-between shadow-[0_0_30px_rgba(245,158,11,0.15)]">
         <div class="flex gap-3">
-          <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5"></i>
+          <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5"></i>
           <div>
-            <h3 class="text-sm font-semibold text-amber-800">Gmail App Password Required to Send</h3>
-            <p class="text-xs text-amber-700 mt-0.5">
-              To send emails directly from <code class="font-bold">vibhudixit88@gmail.com</code>, generate a 16-character Google App Password and enter it in Settings.
+            <h3 class="text-sm font-semibold text-amber-200">Gmail App Password Required to Dispatch</h3>
+            <p class="text-xs text-amber-300/80 mt-0.5">
+              To send emails directly from <code class="font-mono font-bold text-amber-100">harsh19singh98@gmail.com</code>, generate a 16-character Google App Password and enter it in Settings.
             </p>
           </div>
         </div>
-        <button onclick="switchTab('settings')" class="text-xs font-semibold px-3 py-1.5 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition flex items-center gap-1 flex-shrink-0">
+        <button onclick="switchTab('settings')" class="text-xs font-semibold px-3 py-1.5 bg-gradient-to-r from-amber-500 to-amber-600 text-zinc-950 rounded-xl hover:from-amber-400 hover:to-amber-500 transition shadow-sm flex items-center gap-1 flex-shrink-0">
           Configure Now <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
         </button>
       </div>
 
+      <!-- Main Two-Column Layout -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
-        <!-- Left Column: Input Post & Extracted Meta (5 cols) -->
-        <div class="lg:col-span-5 space-y-5">
+        <!-- Left Column: Input Post & Extracted Fields (5 cols) -->
+        <div class="lg:col-span-5 space-y-6">
           
-          <!-- Card: Input Post -->
-          <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
+          <!-- Card: Input Post / Bulk Emails -->
+          <div class="antigravity-card rounded-3xl p-6 space-y-4">
             <div class="flex items-center justify-between">
-              <label class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                <i data-lucide="clipboard-paste" class="w-4 h-4 text-blue-600"></i>
-                Paste LinkedIn Post OR Multiple Recruiter Emails
+              <label class="text-xs font-bold uppercase tracking-wider text-zinc-300 flex items-center gap-2">
+                <i data-lucide="clipboard-paste" class="w-4 h-4 text-cyan-400"></i>
+                Input Post or Recruiter Emails
               </label>
-              <button onclick="clearInput()" class="text-xs text-slate-400 hover:text-slate-600 flex items-center gap-1 transition">
+              <button onclick="clearInput()" class="text-xs text-zinc-500 hover:text-zinc-300 flex items-center gap-1 transition">
                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear
               </button>
             </div>
 
-            <textarea id="raw-post-input" rows="6" 
-              placeholder="Paste either:&#10;1) A LinkedIn job recruitment post&#10;2) A single recruiter email (e.g. hr@company.com)&#10;3) MULTIPLE emails separated by newlines or commas for batch sending/scheduling!" 
-              class="w-full text-xs font-mono bg-slate-50 border border-slate-200 rounded-xl p-3.5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-y"></textarea>
+            <textarea id="raw-post-input" rows="7" 
+              placeholder="Paste either:&#10;1) A LinkedIn job recruitment post&#10;2) A single recruiter email (e.g. hr@company.com)&#10;3) MULTIPLE emails separated by newlines or commas for batch outreach!" 
+              class="w-full text-xs font-mono bg-zinc-950/80 border border-white/10 rounded-2xl p-4 text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40 transition resize-y leading-relaxed"></textarea>
 
             <div class="flex items-center gap-2">
-              <button onclick="processInput()" id="btn-generate" class="flex-1 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-sm hover:shadow transition flex items-center justify-center gap-2">
-                <i data-lucide="sparkles" class="w-4 h-4"></i>
+              <button onclick="processInput()" id="btn-generate" 
+                class="w-full py-3 px-5 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white text-xs font-bold rounded-2xl shadow-[0_0_25px_rgba(56,189,248,0.3)] hover:shadow-[0_0_35px_rgba(56,189,248,0.5)] active:scale-[0.99] transition-all flex items-center justify-center gap-2">
+                <i data-lucide="sparkles" class="w-4 h-4 text-cyan-200"></i>
                 <span>Analyze & Generate Draft</span>
               </button>
             </div>
             
-            <p class="text-[11px] text-slate-400 text-center">
-              💡 Tip: If you enter only an email address, it automatically creates a <b>Software Engineer</b> application.
+            <p class="text-[11px] text-zinc-500 text-center">
+              ✨ Smart engine: Entering an email automatically tailors a targeted <b>Software Engineer</b> application.
             </p>
           </div>
 
           <!-- Card: Extracted Fields (Editable) -->
-          <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                <i data-lucide="sliders" class="w-4 h-4 text-indigo-600"></i>
-                Extracted Information
+          <div class="antigravity-card rounded-3xl p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-300 flex items-center gap-2">
+                <i data-lucide="sliders-horizontal" class="w-4 h-4 text-indigo-400"></i>
+                Extracted Parameters
               </h3>
-              <span id="detected-mode-badge" class="text-[11px] font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-600">
+              <span id="detected-mode-badge" class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-white/10 text-zinc-400 border border-white/10">
                 Ready
               </span>
             </div>
 
-            <div class="space-y-3 text-xs">
+            <div class="space-y-3.5 text-xs">
               <div>
-                <label class="block text-slate-500 font-medium mb-1">Recruiter Email <span class="text-red-500">*</span></label>
+                <label class="block text-zinc-400 font-medium mb-1">Recruiter Email <span class="text-rose-400">*</span></label>
                 <div class="relative">
-                  <i data-lucide="mail" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+                  <i data-lucide="mail" class="w-4 h-4 text-zinc-500 absolute left-3.5 top-2.5"></i>
                   <input type="email" id="field-email" placeholder="e.g. recruiter@company.com" 
-                    class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium">
+                    class="w-full pl-10 pr-3.5 py-2.5 bg-zinc-950/80 border border-white/10 rounded-xl text-white font-medium placeholder-zinc-600 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40">
                 </div>
               </div>
 
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="block text-slate-500 font-medium mb-1">Recruiter Name</label>
-                  <input type="text" id="field-name" placeholder="e.g. Twinkle or Priya" 
-                    class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium">
+                  <label class="block text-zinc-400 font-medium mb-1">Recruiter Name</label>
+                  <input type="text" id="field-name" placeholder="e.g. Priya or Alex" 
+                    class="w-full px-3.5 py-2.5 bg-zinc-950/80 border border-white/10 rounded-xl text-white font-medium placeholder-zinc-600 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40">
                 </div>
                 <div>
-                  <label class="block text-slate-500 font-medium mb-1">Target Company</label>
-                  <input type="text" id="field-company" placeholder="e.g. GammaEdge Technologies" 
-                    class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium">
+                  <label class="block text-zinc-400 font-medium mb-1">Target Company</label>
+                  <input type="text" id="field-company" placeholder="e.g. Microsoft / Stripe" 
+                    class="w-full px-3.5 py-2.5 bg-zinc-950/80 border border-white/10 rounded-xl text-white font-medium placeholder-zinc-600 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40">
                 </div>
               </div>
 
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="block text-slate-500 font-medium mb-1">Role / Position</label>
+                  <label class="block text-zinc-400 font-medium mb-1">Role / Position</label>
                   <input type="text" id="field-role" placeholder="e.g. Python Developer" 
-                    class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium">
+                    class="w-full px-3.5 py-2.5 bg-zinc-950/80 border border-white/10 rounded-xl text-white font-medium placeholder-zinc-600 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40">
                 </div>
                 <div>
-                  <label class="block text-slate-500 font-medium mb-1">Required Exp (Years)</label>
-                  <input type="number" id="field-exp" placeholder="e.g. 1 or 5" 
-                    class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium">
+                  <label class="block text-zinc-400 font-medium mb-1">Required Exp (Years)</label>
+                  <input type="number" id="field-exp" placeholder="e.g. 1 or 3" 
+                    class="w-full px-3.5 py-2.5 bg-zinc-950/80 border border-white/10 rounded-xl text-white font-medium placeholder-zinc-600 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40">
                 </div>
               </div>
 
-              <button onclick="regenerateFromFields()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg transition flex items-center justify-center gap-1.5 mt-2">
-                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+              <button onclick="regenerateFromFields()" class="w-full py-2.5 bg-white/[0.06] hover:bg-white/[0.12] text-zinc-200 font-semibold rounded-xl border border-white/[0.08] transition flex items-center justify-center gap-2 mt-2">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-cyan-400"></i>
                 Update Draft with These Fields
               </button>
             </div>
@@ -208,99 +307,105 @@
 
         </div>
 
-        <!-- Right Column: Live Email Preview & Send Studio (7 cols) -->
-        <div class="lg:col-span-7 space-y-4">
-          <div id="single-studio-box" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+        <!-- Right Column: Live Email Studio & Send Engine (7 cols) -->
+        <div class="lg:col-span-7 space-y-6">
+          <div id="single-studio-box" class="antigravity-card rounded-3xl overflow-hidden flex flex-col">
             
             <!-- Email Studio Header with View Toggles -->
-            <div class="p-3.5 border-b border-slate-200 bg-slate-50/80 flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <i data-lucide="mail-check" class="w-4 h-4 text-blue-600"></i>
-                <h3 class="text-sm font-bold text-slate-800">Email Studio</h3>
+            <div class="p-4 border-b border-white/[0.08] bg-white/[0.02] flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+                  <i data-lucide="mail-check" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-200">Email Studio</h3>
+                  <p class="text-[11px] text-zinc-500">Live preview & dispatch center</p>
+                </div>
               </div>
-              <div class="flex items-center gap-2">
+
+              <div class="flex items-center gap-2.5">
                 <!-- Preview / Edit Switcher -->
-                <div class="bg-slate-200/80 p-0.5 rounded-lg flex items-center text-xs font-semibold">
-                  <button onclick="setPreviewMode('visual')" id="btn-mode-visual" class="px-2.5 py-1 rounded-md bg-white text-slate-800 shadow-xs flex items-center gap-1 transition">
-                    <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-600"></i> Gmail View
+                <div class="bg-zinc-900/90 p-1 rounded-xl border border-white/10 flex items-center text-xs">
+                  <button onclick="setPreviewMode('visual')" id="btn-mode-visual" class="px-3 py-1.5 rounded-lg bg-white/[0.12] text-white border border-white/[0.15] shadow-xs flex items-center gap-1.5 transition-all">
+                    <i data-lucide="eye" class="w-3.5 h-3.5 text-cyan-400"></i> Gmail View
                   </button>
-                  <button onclick="setPreviewMode('edit')" id="btn-mode-edit" class="px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-800 flex items-center gap-1 transition">
+                  <button onclick="setPreviewMode('edit')" id="btn-mode-edit" class="px-3 py-1.5 rounded-lg text-zinc-400 hover:text-white border border-transparent flex items-center gap-1.5 transition-all">
                     <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit Text
                   </button>
                 </div>
-                <button onclick="copyEmailToClipboard()" class="text-xs px-2.5 py-1 bg-white border border-slate-200 rounded-md hover:bg-slate-50 text-slate-700 font-medium flex items-center gap-1 shadow-2xs transition">
-                  <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy
+
+                <button onclick="copyEmailToClipboard()" class="text-xs px-3 py-1.5 bg-white/[0.06] hover:bg-white/[0.12] text-zinc-200 border border-white/[0.08] rounded-xl font-medium flex items-center gap-1.5 transition">
+                  <i data-lucide="copy" class="w-3.5 h-3.5 text-zinc-400"></i> Copy
                 </button>
               </div>
             </div>
 
-            <!-- Subject Line -->
-            <div class="p-4 border-b border-slate-100">
-              <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Subject Line</label>
+            <!-- Subject Line Input -->
+            <div class="p-5 border-b border-white/[0.08] space-y-1.5">
+              <label class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Subject Line</label>
               <input type="text" id="email-subject" 
-                placeholder="Application for Python Developer Role - GammaEdge Technologies" 
-                class="w-full px-3 py-2 text-sm font-semibold text-slate-800 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                placeholder="Application for Software Engineer Role - Company" 
+                class="w-full px-4 py-2.5 text-sm font-semibold text-white bg-zinc-950/80 border border-white/10 rounded-xl focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40">
             </div>
 
             <!-- Email Body: Visual View (Default, Exact Gmail appearance) -->
-            <div id="visual-preview-container" class="p-5 flex-1 min-h-[360px] bg-white border-b border-slate-100">
-              <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center justify-between">
-                <span>Genuine Gmail Formatting (Full Width &bull; Bold Key Highlights)</span>
-                <span class="text-emerald-600 font-medium flex items-center gap-1">
-                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Natural Layout
+            <div id="visual-preview-container" class="p-6 flex-1 min-h-[380px] border-b border-white/[0.08] bg-zinc-950/40">
+              <div class="text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-3 flex items-center justify-between">
+                <span>Native Gmail Dark View (Full Width &bull; Bold Key Highlights)</span>
+                <span class="text-emerald-400 font-medium flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Dynamic Layout
                 </span>
               </div>
-              <div id="visual-preview-content" class="gmail-preview-box p-4 bg-slate-50/50 rounded-xl border border-slate-100 whitespace-pre-wrap">
-                <!-- Live HTML Preview with bold keywords -->
+              <div id="visual-preview-content" class="gmail-preview-box p-5 bg-zinc-900/60 rounded-2xl border border-white/[0.08] whitespace-pre-wrap shadow-inner">
                 Your personalized email will appear here...
               </div>
             </div>
 
             <!-- Email Body Editor (Hidden by default, shown on 'Edit Text' tab) -->
-            <div id="raw-edit-container" class="p-4 flex-1 hidden">
-              <div class="flex items-center justify-between mb-1.5">
-                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Edit Email Text (Supports &lt;b&gt;bold&lt;/b&gt; or **bold**)</label>
-                <button onclick="wrapSelectionWithBold()" class="text-xs px-2 py-0.5 bg-slate-100 hover:bg-slate-200 rounded font-bold text-slate-700">
+            <div id="raw-edit-container" class="p-6 flex-1 hidden bg-zinc-950/40">
+              <div class="flex items-center justify-between mb-2">
+                <label class="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Edit Email Text (Supports &lt;b&gt;bold&lt;/b&gt; or **bold**)</label>
+                <button onclick="wrapSelectionWithBold()" class="text-xs px-2.5 py-1 bg-white/[0.08] hover:bg-white/[0.14] rounded-lg font-bold text-zinc-200 border border-white/10">
                   <b>B</b> Bold Selection
                 </button>
               </div>
               <textarea id="email-body" rows="15" 
                 oninput="updateVisualPreviewFromEditor()"
                 placeholder="Your personalized email draft will appear here ready to review and send..." 
-                class="w-full p-4 text-xs font-mono text-slate-800 bg-slate-50 border border-slate-200 rounded-xl leading-relaxed focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none resize-y"></textarea>
+                class="w-full p-4 text-xs font-mono text-zinc-200 bg-zinc-950 border border-white/10 rounded-2xl leading-relaxed focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40 resize-y"></textarea>
             </div>
 
             <!-- Attachment Banner & Action Bar -->
-            <div class="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <div class="flex items-center gap-2 text-xs text-slate-600 w-full sm:w-auto">
-                <div class="p-1.5 rounded-lg bg-red-100 text-red-700 flex items-center justify-center">
+            <div class="p-5 bg-white/[0.02] border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div class="flex items-center gap-3 text-xs text-zinc-300 w-full sm:w-auto">
+                <div class="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center">
                   <i data-lucide="file-text" class="w-4 h-4"></i>
                 </div>
                 <div>
-                  <span class="font-semibold text-slate-800 block truncate" id="card-resume-name">VibhuDixit_Resume.pdf</span>
-                  <span class="text-[11px] text-slate-500" id="card-resume-size">Attached automatically</span>
+                  <span class="font-semibold text-white block truncate" id="card-resume-name">HarshKumarSingh_Resume.pdf</span>
+                  <span class="text-[11px] text-zinc-500" id="card-resume-size">Attached automatically</span>
                 </div>
               </div>
 
-              <!-- Action Buttons: Schedule 10 AM, Custom Time, Send Now -->
-              <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+              <!-- Action Buttons -->
+              <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
                 <button onclick="scheduleSingle10AM()" id="btn-schedule-10am" 
-                  class="px-3.5 py-2 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-semibold rounded-xl shadow-xs transition flex items-center gap-1.5"
+                  class="px-4 py-2.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/20 text-xs font-semibold rounded-xl shadow-xs transition flex items-center gap-2"
                   title="Queue email to send automatically at 10:00 AM">
-                  <i data-lucide="clock" class="w-4 h-4 text-amber-600"></i>
-                  <span>Schedule for 10:00 AM</span>
+                  <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-400"></i>
+                  <span>Schedule 10 AM</span>
                 </button>
 
                 <button onclick="openCustomScheduleModal('single')" 
-                  class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition flex items-center gap-1"
+                  class="px-3.5 py-2.5 bg-white/[0.06] hover:bg-white/[0.12] text-zinc-300 border border-white/[0.08] text-xs font-semibold rounded-xl transition flex items-center gap-1.5"
                   title="Pick a custom date and time">
-                  <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-500"></i>
+                  <i data-lucide="calendar" class="w-3.5 h-3.5 text-zinc-400"></i>
                   <span>Custom Time</span>
                 </button>
 
                 <button onclick="sendApplicationNow()" id="btn-send-email" 
-                  class="px-5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold text-xs rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-1.5">
-                  <i data-lucide="send" class="w-4 h-4"></i>
+                  class="px-6 py-2.5 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-[0_0_20px_rgba(56,189,248,0.3)] hover:shadow-[0_0_30px_rgba(56,189,248,0.5)] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                  <i data-lucide="send" class="w-3.5 h-3.5"></i>
                   <span id="send-btn-text">Send Now</span>
                 </button>
               </div>
@@ -309,68 +414,68 @@
           </div>
 
           <!-- Batch Outreach Studio Box (Visible when multiple emails pasted) -->
-          <div id="batch-studio-box" class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col p-5 space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
-              <div class="flex items-center gap-2">
-                <div class="p-1.5 rounded-lg bg-indigo-50 text-indigo-600">
-                  <i data-lucide="layers" class="w-4 h-4"></i>
+          <div id="batch-studio-box" class="hidden antigravity-card rounded-3xl p-6 space-y-5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.08] pb-4">
+              <div class="flex items-center gap-3">
+                <div class="p-2 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                  <i data-lucide="layers" class="w-5 h-5"></i>
                 </div>
                 <div>
-                  <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                  <h3 class="text-sm font-bold text-white flex items-center gap-2">
                     Batch Outreach Hub
-                    <span id="batch-count-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800">0 Recipients</span>
+                    <span id="batch-count-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">0 Recipients</span>
                   </h3>
-                  <p class="text-[11px] text-slate-400">Personalized applications generated for each recipient</p>
+                  <p class="text-xs text-zinc-400">Personalized applications generated for each recipient</p>
                 </div>
               </div>
 
               <!-- Batch Action Buttons -->
-              <div class="flex flex-wrap items-center gap-2">
+              <div class="flex flex-wrap items-center gap-2.5">
                 <button onclick="scheduleBatch10AM()" id="btn-batch-10am" 
-                  class="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-semibold rounded-lg shadow-xs transition flex items-center gap-1.5"
+                  class="px-3.5 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/20 text-xs font-semibold rounded-xl transition flex items-center gap-1.5"
                   title="Queue all emails to send at morning 10:00 AM">
-                  <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-600"></i>
+                  <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-400"></i>
                   <span>Schedule All 10 AM</span>
                 </button>
 
                 <button onclick="openCustomScheduleModal('batch')" 
-                  class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-1">
-                  <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-500"></i>
+                  class="px-3 py-2 bg-white/[0.06] hover:bg-white/[0.12] text-zinc-300 border border-white/[0.08] text-xs font-semibold rounded-xl transition flex items-center gap-1">
+                  <i data-lucide="calendar" class="w-3.5 h-3.5 text-zinc-400"></i>
                   <span>Custom Time</span>
                 </button>
 
                 <button onclick="sendBatchNow()" id="btn-batch-send" 
-                  class="px-4 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm transition flex items-center gap-1.5">
+                  class="px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center gap-1.5">
                   <i data-lucide="send" class="w-3.5 h-3.5"></i>
                   <span id="batch-send-text">Send All Now</span>
                 </button>
               </div>
             </div>
 
-            <!-- Batch Progress Bar (Hidden during idle) -->
-            <div id="batch-progress-container" class="hidden space-y-1.5 bg-slate-50 p-3 rounded-xl border border-slate-200">
-              <div class="flex justify-between text-xs font-semibold text-slate-700">
-                <span id="batch-progress-status">Sending batch...</span>
+            <!-- Batch Progress Bar -->
+            <div id="batch-progress-container" class="hidden space-y-2 bg-zinc-950/80 p-4 rounded-2xl border border-white/10">
+              <div class="flex justify-between text-xs font-semibold text-zinc-300">
+                <span id="batch-progress-status">Dispatching batch...</span>
                 <span id="batch-progress-percent">0%</span>
               </div>
-              <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-                <div id="batch-progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+              <div class="w-full bg-zinc-900 rounded-full h-2 overflow-hidden border border-white/5">
+                <div id="batch-progress-bar" class="bg-gradient-to-r from-cyan-500 to-indigo-500 h-2 rounded-full transition-all duration-300 shadow-[0_0_10px_rgba(56,189,248,0.5)]" style="width: 0%"></div>
               </div>
             </div>
 
             <!-- Batch Recipients Table -->
-            <div class="overflow-x-auto rounded-xl border border-slate-100 max-h-[420px] overflow-y-auto">
-              <table class="w-full text-left text-xs text-slate-600">
-                <thead class="bg-slate-50 text-[11px] font-bold uppercase text-slate-400 border-b border-slate-100 sticky top-0">
+            <div class="overflow-x-auto rounded-2xl border border-white/[0.08] max-h-[420px] overflow-y-auto">
+              <table class="w-full text-left text-xs text-zinc-300">
+                <thead class="bg-zinc-900/90 text-[11px] font-bold uppercase text-zinc-400 border-b border-white/[0.08] sticky top-0">
                   <tr>
-                    <th class="p-2.5">#</th>
-                    <th class="p-2.5">Recruiter Email</th>
-                    <th class="p-2.5">Name</th>
-                    <th class="p-2.5">Company</th>
-                    <th class="p-2.5 text-right">Draft</th>
+                    <th class="p-3">#</th>
+                    <th class="p-3">Recruiter Email</th>
+                    <th class="p-3">Name</th>
+                    <th class="p-3">Company</th>
+                    <th class="p-3 text-right">Draft</th>
                   </tr>
                 </thead>
-                <tbody id="batch-table-body" class="divide-y divide-slate-100">
+                <tbody id="batch-table-body" class="divide-y divide-white/[0.05]">
                 </tbody>
               </table>
             </div>
@@ -381,44 +486,44 @@
     </section>
 
     <!-- ==================== TAB 2: SENT HISTORY ==================== -->
-    <section id="tab-history" class="hidden space-y-4">
-      <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <section id="tab-history" class="hidden space-y-6">
+      <div class="antigravity-card rounded-3xl p-6 space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-              <i data-lucide="history" class="w-5 h-5 text-blue-600"></i>
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i data-lucide="history" class="w-5 h-5 text-cyan-400"></i>
               Application Outreach History
             </h2>
-            <p class="text-xs text-slate-500">Track and manage all emails sent through this system</p>
+            <p class="text-xs text-zinc-400">Track and inspect all emails sent or scheduled through JobwalaAI</p>
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2.5">
             <input type="text" id="history-search" oninput="filterHistoryTable()" placeholder="Search company, role or email..." 
-              class="text-xs px-3 py-1.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <button onclick="loadHistory()" class="p-1.5 text-slate-500 hover:text-slate-800 border border-slate-200 rounded-lg hover:bg-slate-50 transition" title="Refresh">
+              class="text-xs px-3.5 py-2 bg-zinc-950/80 border border-white/10 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40">
+            <button onclick="loadHistory()" class="p-2 text-zinc-400 hover:text-white border border-white/10 rounded-xl hover:bg-white/[0.06] transition" title="Refresh">
               <i data-lucide="rotate-cw" class="w-4 h-4"></i>
             </button>
-            <button onclick="clearAllHistoryConfirm()" class="text-xs px-3 py-1.5 text-red-600 hover:bg-red-50 border border-red-200 rounded-lg font-medium transition">
-              Clear History
+            <button onclick="clearAllHistoryConfirm()" class="text-xs px-3.5 py-2 text-rose-400 hover:bg-rose-500/10 border border-rose-500/20 rounded-xl font-medium transition">
+              Clear Logs
             </button>
           </div>
         </div>
 
         <!-- History Table -->
-        <div class="overflow-x-auto rounded-xl border border-slate-100">
-          <table class="w-full text-left text-xs text-slate-600">
-            <thead class="bg-slate-50 text-[11px] font-bold uppercase text-slate-400 border-b border-slate-100">
+        <div class="overflow-x-auto rounded-2xl border border-white/[0.08]">
+          <table class="w-full text-left text-xs text-zinc-300">
+            <thead class="bg-zinc-900/90 text-[11px] font-bold uppercase text-zinc-400 border-b border-white/[0.08]">
               <tr>
-                <th class="p-3">Date & Time</th>
-                <th class="p-3">Recruiter Email</th>
-                <th class="p-3">Company</th>
-                <th class="p-3">Role</th>
-                <th class="p-3">Status / Delivery Time</th>
-                <th class="p-3 text-right">Actions</th>
+                <th class="p-3.5">Date & Time</th>
+                <th class="p-3.5">Recruiter Email</th>
+                <th class="p-3.5">Company</th>
+                <th class="p-3.5">Role</th>
+                <th class="p-3.5">Status / Delivery Time</th>
+                <th class="p-3.5 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody id="history-table-body" class="divide-y divide-slate-100">
+            <tbody id="history-table-body" class="divide-y divide-white/[0.05]">
               <tr>
-                <td colspan="6" class="p-6 text-center text-slate-400">Loading history...</td>
+                <td colspan="6" class="p-8 text-center text-zinc-500">Loading history...</td>
               </tr>
             </tbody>
           </table>
@@ -431,109 +536,109 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         <!-- Card 1: Gmail SMTP Setup -->
-        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
-          <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
-            <div class="p-2 bg-red-50 text-red-600 rounded-xl">
+        <div class="antigravity-card rounded-3xl p-6 space-y-5">
+          <div class="flex items-center gap-3 border-b border-white/[0.08] pb-4">
+            <div class="p-2.5 bg-red-500/10 text-red-400 rounded-2xl border border-red-500/20">
               <i data-lucide="mail" class="w-5 h-5"></i>
             </div>
             <div>
-              <h3 class="text-sm font-bold text-slate-900">Gmail Sending Configuration</h3>
-              <p class="text-xs text-slate-500">Configure your Gmail credentials for sending applications</p>
+              <h3 class="text-sm font-bold text-white">Gmail SMTP Dispatch Engine</h3>
+              <p class="text-xs text-zinc-400">Configure your Google App Password for direct sending</p>
             </div>
           </div>
 
-          <div class="space-y-3 text-xs">
+          <div class="space-y-4 text-xs">
             <div>
-              <label class="block font-medium text-slate-600 mb-1">Sender Email</label>
-              <input type="email" id="setting-sender-email" value="vibhudixit88@gmail.com" 
-                class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg font-medium text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
+              <label class="block font-medium text-zinc-300 mb-1">Sender Email</label>
+              <input type="email" id="setting-sender-email" value="harsh19singh98@gmail.com" 
+                class="w-full px-3.5 py-2.5 bg-zinc-950/80 border border-white/10 rounded-xl font-medium text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40">
             </div>
 
             <div>
               <div class="flex items-center justify-between mb-1">
-                <label class="font-medium text-slate-600">Gmail App Password (16 characters)</label>
-                <a href="https://myaccount.google.com/apppasswords" target="_blank" class="text-[11px] text-blue-600 hover:underline flex items-center gap-0.5">
-                  Get App Password <i data-lucide="external-link" class="w-3 h-3"></i>
+                <label class="font-medium text-zinc-300">Gmail App Password (16 characters)</label>
+                <a href="https://myaccount.google.com/apppasswords" target="_blank" class="text-[11px] text-cyan-400 hover:underline flex items-center gap-1">
+                  Get Password <i data-lucide="external-link" class="w-3 h-3"></i>
                 </a>
               </div>
               <div class="relative">
                 <input type="password" id="setting-app-password" placeholder="e.g. xxxx xxxx xxxx xxxx" 
-                  class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg font-mono focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+                  class="w-full px-3.5 py-2.5 bg-zinc-950/80 border border-white/10 rounded-xl font-mono text-white placeholder-zinc-600 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40">
+                <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3.5 top-2.5 text-zinc-400 hover:text-white">
                   <i data-lucide="eye" id="pwd-eye-icon" class="w-4 h-4"></i>
                 </button>
               </div>
-              <p class="text-[11px] text-slate-400 mt-1">
-                Steps: 1. Go to Google Account > Security > 2-Step Verification. 2. Scroll to "App passwords". 3. Create one named "Job Outreach" and paste the 16 characters here.
+              <p class="text-[11px] text-zinc-500 mt-1.5 leading-relaxed">
+                Google Account &rarr; Security &rarr; 2-Step Verification &rarr; App Passwords. Generate an app password named "JobwalaAI" and paste it here.
               </p>
             </div>
 
-            <div class="pt-2 flex items-center gap-2">
-              <button onclick="testSmtpConnection()" id="btn-test-smtp" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg transition flex items-center gap-1.5">
-                <i data-lucide="activity" class="w-3.5 h-3.5"></i> Test Connection
+            <div class="pt-2 flex items-center gap-3">
+              <button onclick="testSmtpConnection()" id="btn-test-smtp" class="px-4 py-2.5 bg-white/[0.06] hover:bg-white/[0.12] text-zinc-200 font-semibold rounded-xl border border-white/[0.08] transition flex items-center gap-2">
+                <i data-lucide="activity" class="w-3.5 h-3.5 text-cyan-400"></i> Test Connection
               </button>
-              <button onclick="saveSettingsFromUi()" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition flex items-center gap-1.5">
+              <button onclick="saveSettingsFromUi()" class="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold rounded-xl shadow-md transition flex items-center gap-2">
                 <i data-lucide="save" class="w-3.5 h-3.5"></i> Save Settings
               </button>
             </div>
 
-            <div id="smtp-test-result" class="hidden p-3 rounded-lg text-xs"></div>
+            <div id="smtp-test-result" class="hidden p-3.5 rounded-xl text-xs"></div>
           </div>
         </div>
 
-        <!-- Card 2: Resume Manager -->
-        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
-          <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
-            <div class="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+        <!-- Card 2: Resume Manager & Profile Defaults -->
+        <div class="antigravity-card rounded-3xl p-6 space-y-5">
+          <div class="flex items-center gap-3 border-b border-white/[0.08] pb-4">
+            <div class="p-2.5 bg-emerald-500/10 text-emerald-400 rounded-2xl border border-emerald-500/20">
               <i data-lucide="file-text" class="w-5 h-5"></i>
             </div>
             <div>
-              <h3 class="text-sm font-bold text-slate-900">Resume Attachment</h3>
-              <p class="text-xs text-slate-500">Manage the PDF resume attached to every email</p>
+              <h3 class="text-sm font-bold text-white">Active Resume Attachment</h3>
+              <p class="text-xs text-zinc-400">Manage the PDF resume attached to every application</p>
             </div>
           </div>
 
-          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50/50 space-y-3">
+          <div class="border border-white/10 rounded-2xl p-4 bg-zinc-950/60 space-y-3">
             <div class="flex items-center justify-between">
               <div>
-                <span class="text-xs font-bold text-slate-800 block" id="setting-resume-filename">VibhuDixit_Resume.pdf</span>
-                <span class="text-[11px] text-slate-500" id="setting-resume-size">Checking file...</span>
+                <span class="text-xs font-bold text-white block" id="setting-resume-filename">HarshKumarSingh_Resume.pdf</span>
+                <span class="text-[11px] text-zinc-400" id="setting-resume-size">Checking file...</span>
               </div>
-              <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 font-semibold text-[11px] rounded-full">
-                Active Attachment
+              <span class="px-2.5 py-1 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-semibold text-[11px] rounded-full">
+                Active PDF
               </span>
             </div>
 
-            <div class="border-t border-slate-200 pt-3">
-              <label class="block text-xs font-medium text-slate-600 mb-2">Upload Updated Resume (PDF only)</label>
+            <div class="border-t border-white/[0.08] pt-3">
+              <label class="block text-xs font-medium text-zinc-300 mb-2">Upload Updated Resume (PDF only)</label>
               <input type="file" id="resume-file-input" accept=".pdf" 
-                class="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
-              <button onclick="uploadNewResume()" class="mt-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg transition flex items-center gap-1.5">
-                <i data-lucide="upload" class="w-3.5 h-3.5"></i> Upload & Set Active
+                class="block w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-cyan-500/15 file:text-cyan-300 hover:file:bg-cyan-500/25 cursor-pointer">
+              <button onclick="uploadNewResume()" class="mt-2.5 px-4 py-2 bg-white/[0.08] hover:bg-white/[0.14] text-white text-xs font-semibold rounded-xl border border-white/10 transition flex items-center gap-2">
+                <i data-lucide="upload" class="w-3.5 h-3.5 text-cyan-400"></i> Upload & Set Active
               </button>
             </div>
           </div>
 
-          <!-- Card 3: Personal Profile Details -->
-          <div class="border-t border-slate-100 pt-3 space-y-3 text-xs">
-            <h4 class="font-bold text-slate-800">Sender Profile Defaults</h4>
+          <!-- Card 3: Personal Profile Defaults -->
+          <div class="border-t border-white/[0.08] pt-4 space-y-3.5 text-xs">
+            <h4 class="font-bold uppercase tracking-wider text-zinc-300 text-[11px]">Sender Profile Information</h4>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="block text-slate-500 mb-1">Full Name</label>
-                <input type="text" id="setting-name" value="Vibhu Dixit" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg">
+                <label class="block text-zinc-400 mb-1">Full Name</label>
+                <input type="text" id="setting-name" value="Harsh Kumar Singh" class="w-full px-3.5 py-2.5 bg-zinc-950/80 border border-white/10 rounded-xl text-white">
               </div>
               <div>
-                <label class="block text-slate-500 mb-1">Phone Number</label>
-                <input type="text" id="setting-phone" value="+91 7500211114" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg">
+                <label class="block text-zinc-400 mb-1">Phone Number</label>
+                <input type="text" id="setting-phone" placeholder="+91 ..." class="w-full px-3.5 py-2.5 bg-zinc-950/80 border border-white/10 rounded-xl text-white">
               </div>
             </div>
             <div>
-              <label class="block text-slate-500 mb-1">LinkedIn Profile URL</label>
-              <input type="text" id="setting-linkedin" value="https://www.linkedin.com/in/vibhu-dixit-b42a11251/" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg">
+              <label class="block text-zinc-400 mb-1">LinkedIn Profile URL</label>
+              <input type="text" id="setting-linkedin" placeholder="https://www.linkedin.com/in/..." class="w-full px-3.5 py-2.5 bg-zinc-950/80 border border-white/10 rounded-xl text-white">
             </div>
             <div>
-              <label class="block text-slate-500 mb-1">Current Experience Summary</label>
-              <input type="text" id="setting-company" value="Meridian Solutions Pvt. Ltd. (Microsoft Gold Partner)" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg">
+              <label class="block text-zinc-400 mb-1">Current Experience Summary</label>
+              <input type="text" id="setting-company" placeholder="e.g. Software Engineer (1+ years)" class="w-full px-3.5 py-2.5 bg-zinc-950/80 border border-white/10 rounded-xl text-white">
             </div>
           </div>
 
@@ -544,64 +649,64 @@
 
   </main>
 
-  <!-- View Modal for Sent Email -->
-  <div id="view-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-2xl w-full border border-slate-200 shadow-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 class="text-sm font-bold text-slate-900" id="modal-title">Application Details</h3>
-        <button onclick="closeModal()" class="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600">
+  <!-- View Modal for Sent / Batch Email -->
+  <div id="view-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="antigravity-card rounded-3xl max-w-2xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto border border-white/15">
+      <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
+        <h3 class="text-sm font-bold text-white" id="modal-title">Application Inspection</h3>
+        <button onclick="closeModal()" class="p-1.5 rounded-xl hover:bg-white/10 text-zinc-400 hover:text-white transition">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
-      <div class="text-xs space-y-2 text-slate-600">
-        <p><b>To:</b> <span id="modal-to"></span></p>
-        <p><b>Subject:</b> <span id="modal-subject" class="font-semibold text-slate-800"></span></p>
-        <p><b>Date / Status:</b> <span id="modal-date"></span></p>
-        <div class="mt-3">
-          <b class="block mb-1 text-slate-700">Body:</b>
-          <div id="modal-body" class="gmail-preview-box p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs"></div>
+      <div class="text-xs space-y-2.5 text-zinc-300">
+        <p><b>To:</b> <span id="modal-to" class="text-cyan-300 font-mono"></span></p>
+        <p><b>Subject:</b> <span id="modal-subject" class="font-semibold text-white"></span></p>
+        <p><b>Date / Status:</b> <span id="modal-date" class="text-zinc-400"></span></p>
+        <div class="mt-4">
+          <b class="block mb-2 text-zinc-400 uppercase tracking-wider text-[11px]">Email Body:</b>
+          <div id="modal-body" class="gmail-preview-box p-5 bg-zinc-900/80 rounded-2xl border border-white/[0.08] text-xs"></div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Custom Schedule Date & Time Modal -->
-  <div id="schedule-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full border border-slate-200 shadow-2xl p-6 space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-          <i data-lucide="calendar" class="w-4 h-4 text-amber-600"></i>
-          Schedule Delivery Time
+  <div id="schedule-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="antigravity-card rounded-3xl max-w-md w-full p-6 space-y-5 border border-white/15">
+      <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
+        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+          <i data-lucide="calendar" class="w-4 h-4 text-amber-400"></i>
+          Schedule Dispatch Time
         </h3>
-        <button onclick="closeScheduleModal()" class="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600">
+        <button onclick="closeScheduleModal()" class="p-1.5 rounded-xl hover:bg-white/10 text-zinc-400 hover:text-white transition">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <div class="space-y-3 text-xs">
-        <p class="text-slate-600">Pick the exact date and time when this application should be automatically sent:</p>
+      <div class="space-y-3.5 text-xs">
+        <p class="text-zinc-400">Select the target date and time when this application should be automatically dispatched:</p>
         <div>
-          <label class="block font-medium text-slate-700 mb-1">Delivery Date & Time</label>
+          <label class="block font-medium text-zinc-300 mb-1.5">Dispatch Date & Time</label>
           <input type="datetime-local" id="custom-schedule-datetime" 
-            class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            class="w-full px-3.5 py-2.5 bg-zinc-950 border border-white/10 rounded-xl text-xs font-semibold text-white focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40">
         </div>
       </div>
 
-      <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
-        <button onclick="closeScheduleModal()" class="px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg font-medium transition">
+      <div class="pt-3 flex items-center justify-end gap-2.5 border-t border-white/[0.08]">
+        <button onclick="closeScheduleModal()" class="px-4 py-2 text-xs text-zinc-400 hover:text-white hover:bg-white/[0.06] rounded-xl font-medium transition">
           Cancel
         </button>
-        <button onclick="confirmCustomSchedule()" class="px-4 py-2 text-xs bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg shadow-sm transition flex items-center gap-1.5">
+        <button onclick="confirmCustomSchedule()" class="px-5 py-2 text-xs bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold rounded-xl shadow-md transition flex items-center gap-1.5">
           <i data-lucide="clock" class="w-3.5 h-3.5"></i> Confirm Schedule
         </button>
       </div>
     </div>
   </div>
 
-  <footer class="py-4 text-center text-xs text-slate-400 border-t border-slate-200 bg-white">
-    LinkedIn Job Mail Automator &bull; Designed for Vibhu Dixit &bull; 1 Year Exp @ Meridian Solutions
+  <footer class="py-5 text-center text-xs text-zinc-500 border-t border-white/[0.06] bg-black/40 backdrop-blur-xl relative z-10">
+    JobwalaAI &bull; Apple Antigravity Interface &bull; Designed for Harsh Kumar Singh
   </footer>
 
-  <script src="/static/app.js?v=2"></script>
+  <script src="/static/app.js?v=3"></script>
 </body>
 </html>

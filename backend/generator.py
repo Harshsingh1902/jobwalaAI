@@ -51,7 +51,7 @@ def extract_all_emails(text: str) -> List[str]:
     unique_emails = []
     for m in matches:
         cleaned_m = m.strip(".").strip().lower()
-        if not any(dummy in cleaned_m for dummy in ["example.com", "yourdomain.com", "vibhudixit"]):
+        if not any(dummy in cleaned_m for dummy in ["example.com", "yourdomain.com", "noreply", "no-reply"]):
             if cleaned_m not in unique_emails:
                 unique_emails.append(cleaned_m)
     return unique_emails
@@ -220,24 +220,49 @@ def generate_email_draft(parsed_data: Dict[str, Any]) -> Dict[str, str]:
     else:
         exp_ack = ""
 
+    sender_name = settings.get("sender_name", "Harsh Kumar Singh")
+    sender_phone = settings.get("sender_phone", "")
+    linkedin_url = settings.get("linkedin_url", "")
+    curr_comp = settings.get("current_company", "")
+    curr_exp = settings.get("current_experience", "1+ years")
+    education = settings.get("education", "B.Tech in Computer Science")
+    certifications = settings.get("certifications", [])
+
     if company and company.lower() not in ["your organization", "your esteemed organization"]:
         subject = f"Application for {role} Role - {company}"
     else:
-        subject = f"Application for {role} Role - Vibhu Dixit"
+        subject = f"Application for {role} Role - {sender_name}"
+
+    exp_intro = f"I have <b>{curr_exp} of professional experience"
+    if curr_comp:
+        exp_intro += f" at {curr_comp}"
+    exp_intro += f"</b>, working with {skills}."
+
+    edu_paragraph = ""
+    edu_parts = []
+    if education:
+        edu_parts.append(f"I hold a <b>{education}</b>")
+    if certifications:
+        cert_str = ", ".join(f"<b>{c}</b>" for c in certifications)
+        edu_parts.append(f"certifications including {cert_str}")
+    if edu_parts:
+        edu_paragraph = " and ".join(edu_parts) + ".\n\n"
+
+    sign_off_lines = ["Regards,", f"<b>{sender_name}</b>"]
+    if sender_phone:
+        sign_off_lines.append(sender_phone)
+    if linkedin_url:
+        sign_off_lines.append(linkedin_url)
+    sign_off = "\n".join(sign_off_lines)
 
     body = (
         f"{salutation}\n\n"
         f"I am writing to apply for the {role} position at {company}. "
-        f"I have <b>1 year of professional experience at Meridian Solutions Pvt. Ltd. (Microsoft Gold Partner)</b>, "
-        f"working with {skills}.\n\n"
-        f"I hold a <b>B.Tech in Computer Science from GLA University</b> and multiple Microsoft certifications, "
-        f"including <b>AZ-900, AZ-104, AZ-500, SC-200, SC-300, and SC-401</b>.\n\n"
+        f"{exp_intro}\n\n"
+        f"{edu_paragraph}"
         f"{contribution}{exp_ack}\n\n"
         f"Please find my updated resume attached for your consideration. I would welcome the opportunity to discuss my suitability for this role.\n\n"
-        f"Regards,\n"
-        f"<b>{settings.get('sender_name', 'Vibhu Dixit')}</b>\n"
-        f"{settings.get('sender_phone', '+91 7500211114')}\n"
-        f"{settings.get('linkedin_url', 'https://www.linkedin.com/in/vibhu-dixit-b42a11251/')}"
+        f"{sign_off}"
     )
 
     return {

@@ -107,7 +107,7 @@ def send_application_email(
     settings = load_settings()
     sender_email = settings.get("sender_email")
     app_password = clean_password(settings.get("gmail_app_password", ""))
-    sender_name = settings.get("sender_name", "Vibhu Dixit")
+    sender_name = settings.get("sender_name", "Harsh Kumar Singh")
 
     if not sender_email:
         return False, "Sender email is missing."
