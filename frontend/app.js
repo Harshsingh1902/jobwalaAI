@@ -16,18 +16,24 @@ document.addEventListener("DOMContentLoaded", () => {
     loadHistory();
     fetchNext10AM();
     initAntigravityPhysics();
+    initParticleCanvas();
+    initDropZone();
+    initKeyboardShortcuts();
+    updateEmailStats();
 
     // Auto-parse on paste or input after 600ms debounce
     let debounceTimer;
     const inputEl = document.getElementById("raw-post-input");
-    inputEl.addEventListener("input", () => {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-            if (inputEl.value.trim().length > 5) {
-                processInput(false);
-            }
-        }, 600);
-    });
+    if (inputEl) {
+        inputEl.addEventListener("input", () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                if (inputEl.value.trim().length > 5) {
+                    processInput(false);
+                }
+            }, 600);
+        });
+    }
 });
 
 // Lenis Buttery Momentum Smooth Scrolling & Layered Parallax
@@ -99,7 +105,144 @@ function initAntigravityPhysics() {
     });
 }
 
-async function fetchNext10AM() {
+// Antigravity Canvas: Interactive 60fps Floating Particles & Constellations
+function initParticleCanvas() {
+    const canvas = document.getElementById("antigravity-canvas");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    let mouse = { x: -1000, y: -1000, radius: 130 };
+
+    window.addEventListener("resize", () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    });
+
+    window.addEventListener("mousemove", (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+    });
+
+    window.addEventListener("mouseout", () => {
+        mouse.x = -1000;
+        mouse.y = -1000;
+    });
+
+    // Generate weightless floating particles
+    const particleCount = Math.min(65, Math.max(25, Math.floor((width * height) / 20000)));
+    const particles = [];
+    const colors = ["#38bdf8", "#818cf8", "#c084fc", "#ffffff"];
+
+    for (let i = 0; i < particleCount; i++) {
+        particles.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            vx: (Math.random() - 0.5) * 0.45,
+            vy: (Math.random() - 0.5) * 0.45,
+            radius: Math.random() * 1.8 + 0.6,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            baseAlpha: Math.random() * 0.35 + 0.15,
+            alpha: 0.2
+        });
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+
+        for (let i = 0; i < particles.length; i++) {
+            const p = particles[i];
+
+            p.x += p.vx;
+            p.y += p.vy;
+
+            // Seamless wrap
+            if (p.x < 0) p.x = width;
+            if (p.x > width) p.x = 0;
+            if (p.y < 0) p.y = height;
+            if (p.y > height) p.y = 0;
+
+            // Subtle mouse repulsion for antigravity feel
+            const dx = p.x - mouse.x;
+            const dy = p.y - mouse.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < mouse.radius) {
+                const force = (mouse.radius - dist) / mouse.radius;
+                const angle = Math.atan2(dy, dx);
+                p.x += Math.cos(angle) * force * 1.6;
+                p.y += Math.sin(angle) * force * 1.6;
+                p.alpha = Math.min(0.9, p.baseAlpha + force * 0.6);
+            } else {
+                p.alpha = p.baseAlpha;
+            }
+
+            // Draw particle
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            // Connect nearby particles with subtle glowing lines
+            for (let j = i + 1; j < particles.length; j++) {
+                const p2 = particles[j];
+                const lineDx = p.x - p2.x;
+                const lineDy = p.y - p2.y;
+                const lineDist = Math.sqrt(lineDx * lineDx + lineDy * lineDy);
+
+                if (lineDist < 110) {
+                    const lineAlpha = (1 - lineDist / 110) * 0.16;
+                    ctx.save();
+                    ctx.strokeStyle = "#38bdf8";
+                    ctx.globalAlpha = lineAlpha;
+                    ctx.lineWidth = 0.6;
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+        }
+
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+}
+
+// Quick Sample Presets for One-Click Testing
+function loadSamplePrompt(type) {
+    const input = document.getElementById("raw-post-input");
+    if (!input) return;
+
+    if (type === "fullstack") {
+        input.value = `We are hiring a Full Stack Developer (React / Python) at Innovate Labs!
+Looking for someone with 1-2 years of experience building modern web apps, REST APIs, and responsive frontends.
+Send your resume to Neha Sharma at tech.talent@innovatecorp.com with your portfolio or GitHub!`;
+    } else if (type === "python") {
+        input.value = `Urgent Opening: Python & AI Engineer at NeuralScale AI
+Skills: Python, FastAPI, LLM integration, PostgreSQL, Docker.
+Experience: 1-3 years.
+Location: Remote (India).
+Interested candidates please share your resume directly with Vikram Mehta at careers@neuralscale.ai`;
+    } else if (type === "cloud") {
+        input.value = `Apex Cloud Systems is looking for a Backend / Cloud Software Engineer (AWS, Microservices, Python/Node).
+1+ years experience preferred.
+Drop your resume and recent projects to David Chen at hiring@apexcloud.io.`;
+    } else if (type === "direct") {
+        input.value = `talent.acquisition@stripe.com\nrecruiting@databricks.com\nhr@uber.com`;
+    }
+
+    scrollToStudio();
+    processInput(true);
+}
+
     try {
         const res = await fetch("/api/default-schedule-time");
         const data = await res.json();
@@ -159,6 +302,7 @@ function updateVisualPreviewFromEditor() {
     const box = document.getElementById("visual-preview-content");
     if (!raw.trim()) {
         box.innerHTML = `<span class="text-zinc-500 italic">Your personalized email will appear here...</span>`;
+        updateEmailStats();
         return;
     }
 
@@ -170,7 +314,44 @@ function updateVisualPreviewFromEditor() {
     formatted = formatted.replace(/(\+91\s*\d{10})/g, '<a href="tel:$1">$1</a>');
     
     box.innerHTML = formatted;
+    updateEmailStats();
 }
+
+// Live Word Count, Character Count, and Recruiter Optimal Length Meter
+function updateEmailStats() {
+    const raw = document.getElementById("email-body")?.value || "";
+    const clean = raw.replace(/<[^>]*>/g, "").replace(/\*\*/g, "").trim();
+    
+    const words = clean ? clean.split(/\s+/).length : 0;
+    const chars = clean.length;
+    const readSecs = Math.max(1, Math.ceil((words / 210) * 60));
+
+    const wordCountEl = document.getElementById("email-word-count");
+    const charCountEl = document.getElementById("email-char-count");
+    const readTimeEl = document.getElementById("email-reading-time");
+    const badgeEl = document.getElementById("optimal-length-badge");
+
+    if (wordCountEl) wordCountEl.textContent = `${words} ${words === 1 ? 'word' : 'words'}`;
+    if (charCountEl) charCountEl.textContent = `${chars} chars`;
+    if (readTimeEl) readTimeEl.textContent = words > 0 ? `~${readSecs}s read` : `~0s read`;
+
+    if (!badgeEl) return;
+
+    if (words === 0) {
+        badgeEl.textContent = "Draft Empty";
+        badgeEl.className = "px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white/10 text-zinc-400 border border-white/10";
+    } else if (words >= 70 && words <= 170) {
+        badgeEl.textContent = "⚡ Optimal Length (75-160w: Highest Response Rate)";
+        badgeEl.className = "px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30";
+    } else if (words < 70) {
+        badgeEl.textContent = "Brief Pitch (< 70w)";
+        badgeEl.className = "px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30";
+    } else {
+        badgeEl.textContent = "Long Pitch (> 170w - Consider Trimming)";
+        badgeEl.className = "px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-500/15 text-purple-300 border border-purple-500/30";
+    }
+}
+
 
 // Wrap selected text in textarea with <b>...</b>
 function wrapSelectionWithBold() {
@@ -241,6 +422,7 @@ function clearInput() {
     document.getElementById("single-studio-box").classList.remove("hidden");
     document.getElementById("batch-studio-box").classList.add("hidden");
     currentBatchItems = [];
+    updateEmailStats();
 }
 
 // Parse input from raw textarea
@@ -713,16 +895,30 @@ async function confirmCustomSchedule() {
     }
 }
 
-// Copy to clipboard
+// Copy to clipboard with instant checkmark feedback
 function copyEmailToClipboard() {
-    const subject = document.getElementById("email-subject").value;
-    const body = document.getElementById("email-body").value;
-    // Clean tags for clipboard
+    const subject = document.getElementById("email-subject")?.value || "";
+    const body = document.getElementById("email-body")?.value || "";
+    if (!subject && !body) {
+        showToast("Nothing to copy yet. Generate a draft first!", "info");
+        return;
+    }
+
     const cleanBody = body.replace(/<\/?b>/gi, "").replace(/\*\*/g, "");
     const fullText = `Subject: ${subject}\n\n${cleanBody}`;
 
     navigator.clipboard.writeText(fullText).then(() => {
         showToast("Clean email text copied to clipboard!", "success");
+        const btn = document.getElementById("btn-copy-email");
+        if (btn) {
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> <span class="text-emerald-300 font-semibold">Copied!</span>`;
+            lucide.createIcons();
+            setTimeout(() => {
+                btn.innerHTML = originalHtml;
+                lucide.createIcons();
+            }, 2000);
+        }
     }).catch(() => {
         showToast("Failed to copy text.", "error");
     });
@@ -877,13 +1073,98 @@ function togglePasswordVisibility() {
     }
 }
 
-// Upload resume
-async function uploadNewResume() {
+// Drop Zone & Drag-and-Drop Resume Handlers
+function initDropZone() {
+    const dropZone = document.getElementById("drop-zone");
     const fileInput = document.getElementById("resume-file-input");
-    if (!fileInput.files.length) {
-        showToast("Please choose a PDF file to upload.", "error");
+    if (!dropZone || !fileInput) return;
+
+    ["dragenter", "dragover"].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.add("border-cyan-400", "bg-cyan-500/10");
+            dropZone.classList.remove("border-white/15", "bg-zinc-950/40");
+        }, false);
+    });
+
+    ["dragleave", "dragend"].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.remove("border-cyan-400", "bg-cyan-500/10");
+            dropZone.classList.add("border-white/15", "bg-zinc-950/40");
+        }, false);
+    });
+
+    dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove("border-cyan-400", "bg-cyan-500/10");
+        dropZone.classList.add("border-white/15", "bg-zinc-950/40");
+
+        const dt = e.dataTransfer;
+        if (dt && dt.files && dt.files.length > 0) {
+            fileInput.files = dt.files;
+            handleFileSelected({ target: fileInput });
+        }
+    }, false);
+}
+
+function handleFileSelected(event) {
+    const input = event.target || document.getElementById("resume-file-input");
+    const displayBox = document.getElementById("selected-file-display");
+    const nameLabel = document.getElementById("selected-file-name");
+    const btnText = document.getElementById("upload-btn-text");
+
+    if (!input || !input.files || !input.files.length) {
+        if (displayBox) displayBox.classList.add("hidden");
+        if (btnText) btnText.textContent = "Upload & Set Active Resume";
         return;
     }
+
+    const file = input.files[0];
+    if (!file.name.toLowerCase().endsWith(".pdf")) {
+        showToast("Please choose a valid PDF file (.pdf)", "error");
+        input.value = "";
+        if (displayBox) displayBox.classList.add("hidden");
+        if (btnText) btnText.textContent = "Upload & Set Active Resume";
+        return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+        showToast("File is larger than the 10MB size limit.", "error");
+        input.value = "";
+        if (displayBox) displayBox.classList.add("hidden");
+        if (btnText) btnText.textContent = "Upload & Set Active Resume";
+        return;
+    }
+
+    const sizeKb = Math.round(file.size / 1024);
+    if (displayBox && nameLabel) {
+        nameLabel.textContent = `Ready: ${file.name} (${sizeKb} KB)`;
+        displayBox.classList.remove("hidden");
+    }
+    if (btnText) {
+        btnText.textContent = `Upload & Save "${file.name}"`;
+    }
+    lucide.createIcons();
+}
+
+// Upload resume with visual progress feedback
+async function uploadNewResume() {
+    const fileInput = document.getElementById("resume-file-input");
+    if (!fileInput || !fileInput.files.length) {
+        showToast("Please select or drop a PDF file first.", "error");
+        return;
+    }
+
+    const btn = document.getElementById("btn-upload-resume");
+    const btnText = document.getElementById("upload-btn-text");
+    const originalText = btnText ? btnText.textContent : "Upload";
+    
+    if (btn) btn.disabled = true;
+    if (btnText) btnText.textContent = "Uploading PDF...";
 
     const formData = new FormData();
     formData.append("file", fileInput.files[0]);
@@ -895,15 +1176,43 @@ async function uploadNewResume() {
         });
         const data = await res.json();
         if (res.ok) {
-            showToast(data.message, "success");
+            showToast(data.message || "Resume updated successfully!", "success");
             checkResumeStatus();
             fileInput.value = "";
+            const displayBox = document.getElementById("selected-file-display");
+            if (displayBox) displayBox.classList.add("hidden");
+            if (btnText) btnText.textContent = "Upload & Set Active Resume";
         } else {
             showToast(data.detail || "Upload failed.", "error");
+            if (btnText) btnText.textContent = originalText;
         }
     } catch (err) {
         showToast("Error uploading file.", "error");
+        if (btnText) btnText.textContent = originalText;
+    } finally {
+        if (btn) btn.disabled = false;
+        lucide.createIcons();
     }
+}
+
+// Keyboard shortcuts for production workflow
+function initKeyboardShortcuts() {
+    document.addEventListener("keydown", (e) => {
+        // Ctrl+Enter or Cmd+Enter to analyze input
+        if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+            const activeEl = document.activeElement;
+            if (activeEl && activeEl.id === "raw-post-input") {
+                e.preventDefault();
+                processInput(true);
+            }
+        }
+
+        // Escape key dismisses modals
+        if (e.key === "Escape") {
+            closeModal();
+            closeScheduleModal();
+        }
+    });
 }
 
 // History functions

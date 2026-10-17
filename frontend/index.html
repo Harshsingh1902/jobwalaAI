@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JobwalaAI - Intelligent Job Outreach Automator</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z'/></svg>">
+
+  <!-- Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -30,9 +35,9 @@
             space: {
               950: '#000000',
               900: '#050508',
-              850: '#0b0b12',
-              800: '#11111c',
-              700: '#1b1b2a',
+              850: '#0a0a10',
+              800: '#10101a',
+              700: '#181826',
             },
             neon: {
               cyan: '#38bdf8',
@@ -47,21 +52,20 @@
             'float-delayed': 'antigravityFloat 7.5s ease-in-out 1.5s infinite',
             'float-slow': 'antigravityFloat 9s ease-in-out 3s infinite',
             'pulse-glow': 'pulseGlow 5s ease-in-out infinite',
-            'drift': 'driftAmbient 20s linear infinite',
+            'beam': 'beamFlow 3s ease-in-out infinite',
           },
           keyframes: {
             antigravityFloat: {
               '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
-              '50%': { transform: 'translateY(-10px) rotate(0.4deg)' },
+              '50%': { transform: 'translateY(-10px) rotate(0.3deg)' },
             },
             pulseGlow: {
               '0%, 100%': { opacity: '0.35', transform: 'scale(1)' },
               '50%': { opacity: '0.7', transform: 'scale(1.08)' },
             },
-            driftAmbient: {
-              '0%': { transform: 'translate(0px, 0px) scale(1)' },
-              '50%': { transform: 'translate(30px, -20px) scale(1.1)' },
-              '100%': { transform: 'translate(0px, 0px) scale(1)' },
+            beamFlow: {
+              '0%': { transform: 'translateX(-100%)' },
+              '100%': { transform: 'translateX(200%)' }
             }
           }
         }
@@ -79,22 +83,17 @@
     body {
       background-color: #000000;
       color: #f1f5f9;
-      background-image: 
-        radial-gradient(circle at 50% -10%, rgba(56, 189, 248, 0.12) 0%, transparent 55%),
-        radial-gradient(circle at 15% 45%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 85% 75%, rgba(168, 85, 247, 0.07) 0%, transparent 50%);
-      background-attachment: fixed;
       overflow-x: hidden;
     }
 
     /* Antigravity 3D Specular Tilt Card */
     .antigravity-card {
-      background: rgba(11, 11, 18, 0.72);
+      background: rgba(12, 12, 20, 0.75);
       backdrop-filter: blur(32px);
       -webkit-backdrop-filter: blur(32px);
       border: 1px solid rgba(255, 255, 255, 0.08);
       box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.85),
-                  inset 0 1px 0 0 rgba(255, 255, 255, 0.14);
+                  inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
                   border-color 0.35s ease,
                   box-shadow 0.35s ease;
@@ -104,19 +103,13 @@
     .antigravity-card:hover {
       border-color: rgba(255, 255, 255, 0.2);
       box-shadow: 0 40px 90px -18px rgba(0, 0, 0, 0.95),
-                  0 0 45px -10px rgba(56, 189, 248, 0.2),
-                  inset 0 1px 0 0 rgba(255, 255, 255, 0.25);
+                  0 0 45px -10px rgba(56, 189, 248, 0.18),
+                  inset 0 1px 0 0 rgba(255, 255, 255, 0.22);
     }
 
     /* Apple-Style Text Gradients */
     .text-apple-headline {
       background: linear-gradient(180deg, #FFFFFF 0%, #A1A1AA 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .text-apple-subheadline {
-      background: linear-gradient(180deg, #E4E4E7 0%, #71717A 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -144,6 +137,19 @@
       color: #ffffff;
     }
 
+    /* Input Focus Glow */
+    .input-apple {
+      background: rgba(7, 7, 12, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.2s ease;
+    }
+    .input-apple:focus {
+      background: rgba(10, 10, 16, 0.95);
+      border-color: rgba(56, 189, 248, 0.6);
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.5), 0 0 20px rgba(56, 189, 248, 0.15);
+      outline: none;
+    }
+
     /* Smooth Custom Scrollbar */
     ::-webkit-scrollbar {
       width: 6px;
@@ -163,18 +169,21 @@
 </head>
 <body class="min-h-screen font-sans antialiased flex flex-col selection:bg-cyan-500/30 selection:text-cyan-200">
 
+  <!-- Interactive Antigravity Particle Field Canvas -->
+  <canvas id="antigravity-canvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
   <!-- Top Cinematic Scroll Progress Bar -->
   <div id="scroll-progress-bar" class="fixed top-0 left-0 h-[2.5px] bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-500 z-50 transition-all duration-75 shadow-[0_0_12px_rgba(56,189,248,0.9)]" style="width: 0%"></div>
 
-  <!-- Ambient Cinematic Deep Space Glows (Layered Parallax) -->
+  <!-- Ambient Deep Space Nebulae -->
   <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
     <div data-parallax="0.08" class="absolute -top-40 left-1/2 -translate-x-1/2 w-[1100px] h-[550px] bg-gradient-to-b from-cyan-500/12 via-indigo-600/10 to-transparent blur-[140px] rounded-full animate-pulse-glow"></div>
-    <div data-parallax="-0.06" class="absolute top-1/3 -left-60 w-[650px] h-[650px] bg-purple-600/10 blur-[160px] rounded-full pointer-events-none animate-drift"></div>
+    <div data-parallax="-0.06" class="absolute top-1/3 -left-60 w-[650px] h-[650px] bg-purple-600/10 blur-[160px] rounded-full pointer-events-none"></div>
     <div data-parallax="0.12" class="absolute bottom-20 -right-60 w-[700px] h-[700px] bg-blue-600/10 blur-[170px] rounded-full pointer-events-none"></div>
   </div>
 
   <!-- Top Apple-Style Floating Navigation Header -->
-  <header class="sticky top-0 z-40 backdrop-blur-3xl bg-black/70 border-b border-white/[0.08] transition-all">
+  <header class="sticky top-0 z-40 backdrop-blur-3xl bg-black/75 border-b border-white/[0.08] transition-all">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between relative z-10">
       
       <!-- Brand & Antigravity Pill -->
@@ -187,8 +196,8 @@
             <span class="text-base font-extrabold tracking-tight text-white group-hover:text-cyan-300 transition-colors">
               JobwalaAI
             </span>
-            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 tracking-wide uppercase">
-              Antigravity 2.0
+            <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 tracking-wide uppercase">
+              Production Ready
             </span>
           </div>
           <p class="text-[11px] text-zinc-400 font-medium">Outreach Automator &bull; Harsh Kumar Singh</p>
@@ -230,12 +239,12 @@
   <div id="toast-container" class="fixed top-20 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
   <!-- ==================== CINEMATIC APPLE HERO SECTION ==================== -->
-  <section id="hero-section" class="relative pt-20 pb-16 px-4 sm:px-6 lg:px-8 text-center max-w-5xl mx-auto flex flex-col items-center">
+  <section id="hero-section" class="relative pt-16 pb-14 px-4 sm:px-6 lg:px-8 text-center max-w-5xl mx-auto flex flex-col items-center">
     
     <!-- Floating Chip Badge -->
     <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.05] border border-white/[0.12] backdrop-blur-xl mb-6 shadow-[0_0_25px_rgba(56,189,248,0.2)] animate-float-hero">
       <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-      <span class="text-xs font-semibold text-zinc-200 tracking-wide">Autonomous Outreach &bull; High Conversion Physics</span>
+      <span class="text-xs font-semibold text-zinc-200 tracking-wide">Autonomous Outreach &bull; High Conversion Architecture</span>
       <i data-lucide="chevron-right" class="w-3 h-3 text-zinc-400"></i>
     </div>
 
@@ -246,75 +255,93 @@
     </h1>
 
     <!-- Minimalist Subheadline -->
-    <p class="text-lg sm:text-xl text-zinc-400 font-medium max-w-2xl leading-relaxed mb-10">
-      Instant LinkedIn post parsing. Dynamic skill tailoring. Direct Gmail SMTP delivery with zero robotic cadences. Designed exclusively for <span class="text-white font-semibold">Harsh Kumar Singh</span>.
+    <p class="text-base sm:text-lg text-zinc-400 font-medium max-w-2xl leading-relaxed mb-8">
+      Instant LinkedIn post parsing. Dynamic skill tailoring. Direct Gmail SMTP delivery with natural recruiter conversational formatting. Configured for <span class="text-white font-semibold">Harsh Kumar Singh</span>.
     </p>
 
     <!-- Hero Action Buttons -->
-    <div class="flex flex-wrap items-center justify-center gap-4 mb-16">
-      <button onclick="scrollToStudio()" class="px-7 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-sm shadow-[0_0_35px_rgba(56,189,248,0.4)] hover:shadow-[0_0_50px_rgba(56,189,248,0.6)] active:scale-95 transition-all flex items-center gap-2.5">
+    <div class="flex flex-wrap items-center justify-center gap-3.5 mb-12">
+      <button onclick="scrollToStudio()" class="px-7 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-xs shadow-[0_0_35px_rgba(56,189,248,0.4)] hover:shadow-[0_0_50px_rgba(56,189,248,0.6)] active:scale-95 transition-all flex items-center gap-2">
         <i data-lucide="sparkles" class="w-4 h-4 text-cyan-200"></i>
         <span>Launch Outreach Studio</span>
         <i data-lucide="arrow-down" class="w-4 h-4 text-cyan-200"></i>
       </button>
 
-      <button onclick="switchTab('settings')" class="px-6 py-3.5 rounded-2xl bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 border border-white/10 hover:border-white/20 font-semibold text-sm backdrop-blur-xl transition-all flex items-center gap-2">
+      <button onclick="switchTab('settings')" class="px-6 py-3.5 rounded-2xl bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 border border-white/10 hover:border-white/20 font-semibold text-xs backdrop-blur-xl transition-all flex items-center gap-2">
         <i data-lucide="sliders" class="w-4 h-4 text-zinc-400"></i>
         <span>Configure Gmail & Profile</span>
       </button>
     </div>
 
-    <!-- Antigravity Layered Showcase Cards (Parallax Floating Elements) -->
-    <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-5 text-left pt-4">
-      
-      <!-- Feature Card 1 -->
-      <div data-parallax="0.04" class="antigravity-card rounded-3xl p-6 relative group overflow-hidden animate-float-hero">
-        <div class="w-10 h-10 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 mb-4 group-hover:scale-110 transition-transform">
-          <i data-lucide="cpu" class="w-5 h-5"></i>
+    <!-- ==================== LIVE INTERACTIVE PIPELINE VISUALIZER ==================== -->
+    <div class="w-full antigravity-card rounded-3xl p-6 sm:p-7 border border-white/10 text-left relative overflow-hidden mb-8">
+      <!-- Animated Top Scan Beam -->
+      <div class="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-75 animate-beam"></div>
+
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.08] pb-4 mb-5">
+        <div class="flex items-center gap-2.5">
+          <div class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></div>
+          <h3 class="text-xs font-bold uppercase tracking-wider text-white">Live Outreach Pipeline Engine</h3>
         </div>
-        <h3 class="text-sm font-bold text-white mb-1.5 flex items-center gap-1.5">
-          Intelligent Parsing
-          <span class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-mono">&lt;100ms</span>
-        </h3>
-        <p class="text-xs text-zinc-400 leading-relaxed">
-          Paste any LinkedIn post or just recruiter emails. Extracts names, company, required role and years seamlessly.
-        </p>
+        <div class="flex items-center gap-3 text-[11px] font-mono text-zinc-400">
+          <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> TLS Encrypted</span>
+          <span class="text-zinc-600">&bull;</span>
+          <span>SMTP Port 587</span>
+          <span class="text-zinc-600">&bull;</span>
+          <span class="text-cyan-300">Harsh Kumar Singh</span>
+        </div>
       </div>
 
-      <!-- Feature Card 2 -->
-      <div data-parallax="-0.03" class="antigravity-card rounded-3xl p-6 relative group overflow-hidden animate-float-delayed">
-        <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 mb-4 group-hover:scale-110 transition-transform">
-          <i data-lucide="mail-check" class="w-5 h-5"></i>
+      <!-- 4-Stage Connected Nodes -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <!-- Node 1: Post Parser -->
+        <div class="bg-zinc-950/70 p-4 rounded-2xl border border-white/5 space-y-2 hover:border-cyan-500/30 transition-all">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono font-bold text-cyan-400 uppercase">Stage 01</span>
+            <i data-lucide="scan-text" class="w-4 h-4 text-cyan-400"></i>
+          </div>
+          <h4 class="text-xs font-bold text-white">Smart Inbound Ingestion</h4>
+          <p class="text-[11px] text-zinc-400 leading-relaxed">Extracts email, recruiter name, target company, and experience requirement in &lt;100ms.</p>
         </div>
-        <h3 class="text-sm font-bold text-white mb-1.5 flex items-center gap-1.5">
-          Native Gmail View
-          <span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-mono">100% Genuine</span>
-        </h3>
-        <p class="text-xs text-zinc-400 leading-relaxed">
-          Simulates authentic Gmail formatting with bold keywords, natural conversational structure, and active PDF attachment.
-        </p>
-      </div>
 
-      <!-- Feature Card 3 -->
-      <div data-parallax="0.06" class="antigravity-card rounded-3xl p-6 relative group overflow-hidden animate-float-slow">
-        <div class="w-10 h-10 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-4 group-hover:scale-110 transition-transform">
-          <i data-lucide="clock" class="w-5 h-5"></i>
+        <!-- Node 2: Personalization -->
+        <div class="bg-zinc-950/70 p-4 rounded-2xl border border-white/5 space-y-2 hover:border-indigo-500/30 transition-all">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono font-bold text-indigo-400 uppercase">Stage 02</span>
+            <i data-lucide="cpu" class="w-4 h-4 text-indigo-400"></i>
+          </div>
+          <h4 class="text-xs font-bold text-white">Skill Matrix Mapping</h4>
+          <p class="text-[11px] text-zinc-400 leading-relaxed">Dynamically tailors Python, Full Stack, GenAI, and Cloud skills to match the exact role opening.</p>
         </div>
-        <h3 class="text-sm font-bold text-white mb-1.5 flex items-center gap-1.5">
-          10:00 AM Smart Queue
-          <span class="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-mono">Peak Open-Rate</span>
-        </h3>
-        <p class="text-xs text-zinc-400 leading-relaxed">
-          Queue applications with one tap to dispatch at tomorrow 10:00 AM sharp when recruiter inbox open rates peak.
-        </p>
-      </div>
 
+        <!-- Node 3: Resume Bundling -->
+        <div class="bg-zinc-950/70 p-4 rounded-2xl border border-white/5 space-y-2 hover:border-purple-500/30 transition-all">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono font-bold text-purple-400 uppercase">Stage 03</span>
+            <i data-lucide="file-check" class="w-4 h-4 text-purple-400"></i>
+          </div>
+          <h4 class="text-xs font-bold text-white">Cryptographic PDF Bundling</h4>
+          <p class="text-[11px] text-zinc-400 leading-relaxed">Attaches <code class="text-purple-300 font-mono text-[10px]">HarshKumarSingh_Resume.pdf</code> with zero corrupt headers.</p>
+        </div>
+
+        <!-- Node 4: Dispatch & Scheduler -->
+        <div class="bg-zinc-950/70 p-4 rounded-2xl border border-white/5 space-y-2 hover:border-emerald-500/30 transition-all">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono font-bold text-emerald-400 uppercase">Stage 04</span>
+            <i data-lucide="send" class="w-4 h-4 text-emerald-400"></i>
+          </div>
+          <h4 class="text-xs font-bold text-white">Direct Gmail SMTP</h4>
+          <p class="text-[11px] text-zinc-400 leading-relaxed">Immediate 1-click delivery or scheduled at morning 10:00 AM for peak recruiter attention.</p>
+        </div>
+
+      </div>
     </div>
 
   </section>
 
   <!-- ==================== MAIN WORKSPACE CONTAINER ==================== -->
-  <main id="studio-workspace" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1 w-full relative z-10 scroll-mt-20">
+  <main id="studio-workspace" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full relative z-10 scroll-mt-20">
 
     <!-- ==================== TAB 1: OUTREACH STUDIO ==================== -->
     <section id="tab-outreach" class="space-y-6">
@@ -353,15 +380,33 @@
               </button>
             </div>
 
+            <!-- Quick Template Chips / Presets for instant live testing -->
+            <div class="flex flex-wrap items-center gap-1.5 pt-0.5">
+              <span class="text-[10px] text-zinc-500 font-semibold uppercase tracking-wider">Presets:</span>
+              <button type="button" onclick="loadSamplePrompt('fullstack')" class="px-2 py-0.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 border border-white/[0.08] text-[10px] transition flex items-center gap-1">
+                ⚡ Full Stack
+              </button>
+              <button type="button" onclick="loadSamplePrompt('python')" class="px-2 py-0.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 border border-white/[0.08] text-[10px] transition flex items-center gap-1">
+                🐍 Python & AI
+              </button>
+              <button type="button" onclick="loadSamplePrompt('cloud')" class="px-2 py-0.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 border border-white/[0.08] text-[10px] transition flex items-center gap-1">
+                ☁️ Cloud Backend
+              </button>
+              <button type="button" onclick="loadSamplePrompt('direct')" class="px-2 py-0.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 border border-white/[0.08] text-[10px] transition flex items-center gap-1">
+                🎯 Direct Email
+              </button>
+            </div>
+
             <textarea id="raw-post-input" rows="7" 
-              placeholder="Paste either:&#10;1) A LinkedIn job recruitment post&#10;2) A single recruiter email (e.g. hr@company.com)&#10;3) MULTIPLE emails separated by newlines or commas for batch outreach!" 
-              class="w-full text-xs font-mono bg-zinc-950/80 border border-white/10 rounded-2xl p-4 text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40 transition resize-y leading-relaxed"></textarea>
+              placeholder="Paste either:&#10;1) A LinkedIn job recruitment post&#10;2) A single recruiter email (e.g. hr@company.com)&#10;3) MULTIPLE emails separated by newlines or commas for batch outreach!&#10;&#10;Shortcut: Press Ctrl+Enter to analyze instantly" 
+              class="w-full text-xs font-mono input-apple rounded-2xl p-4 text-zinc-200 placeholder-zinc-600 focus:outline-none transition resize-y leading-relaxed"></textarea>
 
             <div class="flex items-center gap-2">
               <button onclick="processInput()" id="btn-generate" 
                 class="w-full py-3.5 px-5 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white text-xs font-bold rounded-2xl shadow-[0_0_25px_rgba(56,189,248,0.3)] hover:shadow-[0_0_35px_rgba(56,189,248,0.5)] active:scale-[0.99] transition-all flex items-center justify-center gap-2">
                 <i data-lucide="sparkles" class="w-4 h-4 text-cyan-200"></i>
                 <span>Analyze & Generate Draft</span>
+                <span class="text-[10px] font-mono text-cyan-200/70 border border-white/20 rounded px-1.5 py-0.2 hidden sm:inline">Ctrl+↵</span>
               </button>
             </div>
             
@@ -386,35 +431,47 @@
               <div>
                 <label class="block text-zinc-400 font-medium mb-1">Recruiter Email <span class="text-rose-400">*</span></label>
                 <div class="relative">
-                  <i data-lucide="mail" class="w-4 h-4 text-zinc-500 absolute left-3.5 top-2.5"></i>
+                  <i data-lucide="mail" class="w-4 h-4 text-zinc-500 absolute left-3.5 top-3"></i>
                   <input type="email" id="field-email" placeholder="e.g. recruiter@company.com" 
-                    class="w-full pl-10 pr-3.5 py-2.5 bg-zinc-950/80 border border-white/10 rounded-xl text-white font-medium placeholder-zinc-600 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40">
+                    class="w-full pl-10 pr-3.5 py-2.5 input-apple rounded-xl text-white font-medium placeholder-zinc-600">
                 </div>
               </div>
 
               <div class="grid grid-cols-2 gap-3">
                 <div>
                   <label class="block text-zinc-400 font-medium mb-1">Recruiter Name</label>
-                  <input type="text" id="field-name" placeholder="e.g. Priya or Alex" 
-                    class="w-full px-3.5 py-2.5 bg-zinc-950/80 border border-white/10 rounded-xl text-white font-medium placeholder-zinc-600 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40">
+                  <div class="relative">
+                    <i data-lucide="user" class="w-4 h-4 text-zinc-500 absolute left-3.5 top-3"></i>
+                    <input type="text" id="field-name" placeholder="e.g. Priya or Alex" 
+                      class="w-full pl-10 pr-3.5 py-2.5 input-apple rounded-xl text-white font-medium placeholder-zinc-600">
+                  </div>
                 </div>
                 <div>
                   <label class="block text-zinc-400 font-medium mb-1">Target Company</label>
-                  <input type="text" id="field-company" placeholder="e.g. Microsoft / Stripe" 
-                    class="w-full px-3.5 py-2.5 bg-zinc-950/80 border border-white/10 rounded-xl text-white font-medium placeholder-zinc-600 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40">
+                  <div class="relative">
+                    <i data-lucide="building-2" class="w-4 h-4 text-zinc-500 absolute left-3.5 top-3"></i>
+                    <input type="text" id="field-company" placeholder="e.g. Microsoft / Stripe" 
+                      class="w-full pl-10 pr-3.5 py-2.5 input-apple rounded-xl text-white font-medium placeholder-zinc-600">
+                  </div>
                 </div>
               </div>
 
               <div class="grid grid-cols-2 gap-3">
                 <div>
                   <label class="block text-zinc-400 font-medium mb-1">Role / Position</label>
-                  <input type="text" id="field-role" placeholder="e.g. Python Developer" 
-                    class="w-full px-3.5 py-2.5 bg-zinc-950/80 border border-white/10 rounded-xl text-white font-medium placeholder-zinc-600 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40">
+                  <div class="relative">
+                    <i data-lucide="briefcase" class="w-4 h-4 text-zinc-500 absolute left-3.5 top-3"></i>
+                    <input type="text" id="field-role" placeholder="e.g. Python Developer" 
+                      class="w-full pl-10 pr-3.5 py-2.5 input-apple rounded-xl text-white font-medium placeholder-zinc-600">
+                  </div>
                 </div>
                 <div>
                   <label class="block text-zinc-400 font-medium mb-1">Required Exp (Years)</label>
-                  <input type="number" id="field-exp" placeholder="e.g. 1 or 3" 
-                    class="w-full px-3.5 py-2.5 bg-zinc-950/80 border border-white/10 rounded-xl text-white font-medium placeholder-zinc-600 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40">
+                  <div class="relative">
+                    <i data-lucide="calendar" class="w-4 h-4 text-zinc-500 absolute left-3.5 top-3"></i>
+                    <input type="number" id="field-exp" placeholder="e.g. 1 or 3" 
+                      class="w-full pl-10 pr-3.5 py-2.5 input-apple rounded-xl text-white font-medium placeholder-zinc-600">
+                  </div>
                 </div>
               </div>
 
@@ -454,7 +511,7 @@
                   </button>
                 </div>
 
-                <button onclick="copyEmailToClipboard()" class="text-xs px-3 py-1.5 bg-white/[0.06] hover:bg-white/[0.12] text-zinc-200 border border-white/[0.08] rounded-xl font-medium flex items-center gap-1.5 transition">
+                <button onclick="copyEmailToClipboard()" id="btn-copy-email" class="text-xs px-3 py-1.5 bg-white/[0.06] hover:bg-white/[0.12] text-zinc-200 border border-white/[0.08] rounded-xl font-medium flex items-center gap-1.5 transition">
                   <i data-lucide="copy" class="w-3.5 h-3.5 text-zinc-400"></i> Copy
                 </button>
               </div>
@@ -465,7 +522,7 @@
               <label class="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Subject Line</label>
               <input type="text" id="email-subject" 
                 placeholder="Application for Software Engineer Role - Company" 
-                class="w-full px-4 py-2.5 text-sm font-semibold text-white bg-zinc-950/80 border border-white/10 rounded-xl focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40">
+                class="w-full px-4 py-2.5 text-sm font-semibold text-white input-apple rounded-xl">
             </div>
 
             <!-- Email Body: Visual View (Default, Exact Gmail appearance) -->
@@ -492,7 +549,21 @@
               <textarea id="email-body" rows="15" 
                 oninput="updateVisualPreviewFromEditor()"
                 placeholder="Your personalized email draft will appear here ready to review and send..." 
-                class="w-full p-4 text-xs font-mono text-zinc-200 bg-zinc-950 border border-white/10 rounded-2xl leading-relaxed focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40 resize-y"></textarea>
+                class="w-full p-4 text-xs font-mono text-zinc-200 input-apple rounded-2xl leading-relaxed resize-y"></textarea>
+            </div>
+
+            <!-- Live Word Count & Reading Time Meter -->
+            <div id="email-stats-bar" class="px-5 py-2.5 bg-black/40 border-b border-white/[0.05] flex items-center justify-between text-[11px] text-zinc-400">
+              <div class="flex items-center gap-2">
+                <span id="email-word-count">0 words</span>
+                <span>&bull;</span>
+                <span id="email-char-count">0 chars</span>
+                <span>&bull;</span>
+                <span id="email-reading-time">~0s read</span>
+              </div>
+              <span id="optimal-length-badge" class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white/10 text-zinc-400 border border-white/10">
+                Ready
+              </span>
             </div>
 
             <!-- Attachment Banner & Action Bar -->
@@ -618,7 +689,7 @@
           </div>
           <div class="flex items-center gap-2.5">
             <input type="text" id="history-search" oninput="filterHistoryTable()" placeholder="Search company, role or email..." 
-              class="text-xs px-3.5 py-2 bg-zinc-950/80 border border-white/10 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40">
+              class="text-xs px-3.5 py-2 input-apple rounded-xl text-white placeholder-zinc-500">
             <button onclick="loadHistory()" class="p-2 text-zinc-400 hover:text-white border border-white/10 rounded-xl hover:bg-white/[0.06] transition" title="Refresh">
               <i data-lucide="rotate-cw" class="w-4 h-4"></i>
             </button>
@@ -656,7 +727,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         <!-- Card 1: Gmail SMTP Setup -->
-        <div class="antigravity-card rounded-3xl p-6 space-y-5">
+        <div class="antigravity-card rounded-3xl p-6 sm:p-7 space-y-5">
           <div class="flex items-center gap-3 border-b border-white/[0.08] pb-4">
             <div class="p-2.5 bg-red-500/10 text-red-400 rounded-2xl border border-red-500/20">
               <i data-lucide="mail" class="w-5 h-5"></i>
@@ -669,22 +740,26 @@
 
           <div class="space-y-4 text-xs">
             <div>
-              <label class="block font-medium text-zinc-300 mb-1">Sender Email</label>
-              <input type="email" id="setting-sender-email" value="harsh19singh98@gmail.com" 
-                class="w-full px-3.5 py-2.5 bg-zinc-950/80 border border-white/10 rounded-xl font-medium text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40">
+              <label class="block font-medium text-zinc-300 mb-1.5">Sender Email</label>
+              <div class="relative">
+                <i data-lucide="mail" class="w-4 h-4 text-zinc-500 absolute left-3.5 top-3"></i>
+                <input type="email" id="setting-sender-email" value="harsh19singh98@gmail.com" 
+                  class="w-full pl-10 pr-3.5 py-2.5 input-apple rounded-xl font-medium text-white placeholder-zinc-500">
+              </div>
             </div>
 
             <div>
-              <div class="flex items-center justify-between mb-1">
+              <div class="flex items-center justify-between mb-1.5">
                 <label class="font-medium text-zinc-300">Gmail App Password (16 characters)</label>
-                <a href="https://myaccount.google.com/apppasswords" target="_blank" class="text-[11px] text-cyan-400 hover:underline flex items-center gap-1">
+                <a href="https://myaccount.google.com/apppasswords" target="_blank" class="text-[11px] text-cyan-400 hover:underline flex items-center gap-1 font-medium">
                   Get Password <i data-lucide="external-link" class="w-3 h-3"></i>
                 </a>
               </div>
               <div class="relative">
+                <i data-lucide="key-round" class="w-4 h-4 text-zinc-500 absolute left-3.5 top-3"></i>
                 <input type="password" id="setting-app-password" placeholder="e.g. xxxx xxxx xxxx xxxx" 
-                  class="w-full px-3.5 py-2.5 bg-zinc-950/80 border border-white/10 rounded-xl font-mono text-white placeholder-zinc-600 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40">
-                <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3.5 top-2.5 text-zinc-400 hover:text-white">
+                  class="w-full pl-10 pr-10 py-2.5 input-apple rounded-xl font-mono text-white placeholder-zinc-600">
+                <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3.5 top-3 text-zinc-400 hover:text-white transition">
                   <i data-lucide="eye" id="pwd-eye-icon" class="w-4 h-4"></i>
                 </button>
               </div>
@@ -695,10 +770,12 @@
 
             <div class="pt-2 flex items-center gap-3">
               <button onclick="testSmtpConnection()" id="btn-test-smtp" class="px-4 py-2.5 bg-white/[0.06] hover:bg-white/[0.12] text-zinc-200 font-semibold rounded-xl border border-white/[0.08] transition flex items-center gap-2">
-                <i data-lucide="activity" class="w-3.5 h-3.5 text-cyan-400"></i> Test Connection
+                <i data-lucide="activity" class="w-3.5 h-3.5 text-cyan-400"></i>
+                <span>Test Connection</span>
               </button>
-              <button onclick="saveSettingsFromUi()" class="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold rounded-xl shadow-md transition flex items-center gap-2">
-                <i data-lucide="save" class="w-3.5 h-3.5"></i> Save Settings
+              <button onclick="saveSettingsFromUi()" id="btn-save-settings" class="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold rounded-xl shadow-md transition flex items-center gap-2">
+                <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                <span>Save Settings</span>
               </button>
             </div>
 
@@ -707,7 +784,7 @@
         </div>
 
         <!-- Card 2: Resume Manager & Profile Defaults -->
-        <div class="antigravity-card rounded-3xl p-6 space-y-5">
+        <div class="antigravity-card rounded-3xl p-6 sm:p-7 space-y-5">
           <div class="flex items-center gap-3 border-b border-white/[0.08] pb-4">
             <div class="p-2.5 bg-emerald-500/10 text-emerald-400 rounded-2xl border border-emerald-500/20">
               <i data-lucide="file-text" class="w-5 h-5"></i>
@@ -718,6 +795,7 @@
             </div>
           </div>
 
+          <!-- Active Resume Status Box -->
           <div class="border border-white/10 rounded-2xl p-4 bg-zinc-950/60 space-y-3">
             <div class="flex items-center justify-between">
               <div>
@@ -729,12 +807,35 @@
               </span>
             </div>
 
+            <!-- Modern Production Drag-and-Drop Resume Zone -->
             <div class="border-t border-white/[0.08] pt-3">
-              <label class="block text-xs font-medium text-zinc-300 mb-2">Upload Updated Resume (PDF only)</label>
-              <input type="file" id="resume-file-input" accept=".pdf" 
-                class="block w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-cyan-500/15 file:text-cyan-300 hover:file:bg-cyan-500/25 cursor-pointer">
-              <button onclick="uploadNewResume()" class="mt-2.5 px-4 py-2 bg-white/[0.08] hover:bg-white/[0.14] text-white text-xs font-semibold rounded-xl border border-white/10 transition flex items-center gap-2">
-                <i data-lucide="upload" class="w-3.5 h-3.5 text-cyan-400"></i> Upload & Set Active
+              <label class="block text-xs font-semibold text-zinc-300 mb-2">Upload Updated Resume (PDF only)</label>
+              
+              <div id="drop-zone" onclick="document.getElementById('resume-file-input').click()" 
+                class="group cursor-pointer rounded-2xl border-2 border-dashed border-white/15 hover:border-cyan-400/50 bg-zinc-950/40 hover:bg-zinc-900/40 p-5 text-center transition-all duration-300">
+                <input type="file" id="resume-file-input" accept=".pdf" class="hidden" onchange="handleFileSelected(event)">
+                
+                <div class="flex flex-col items-center justify-center space-y-1.5">
+                  <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <i data-lucide="cloud-upload" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs font-medium text-zinc-200">
+                      <span class="text-cyan-400 font-semibold group-hover:underline">Click to browse</span> or drag and drop PDF
+                    </p>
+                    <p class="text-[10px] text-zinc-500">Max size 10MB &bull; Clean PDF layout</p>
+                  </div>
+                  <div id="selected-file-display" class="hidden text-xs text-emerald-400 font-medium flex items-center gap-1.5 pt-1">
+                    <i data-lucide="file-check" class="w-3.5 h-3.5"></i>
+                    <span id="selected-file-name"></span>
+                  </div>
+                </div>
+              </div>
+
+              <button onclick="uploadNewResume()" id="btn-upload-resume" 
+                class="w-full mt-2.5 py-2.5 px-4 bg-white/[0.08] hover:bg-white/[0.14] text-white text-xs font-semibold rounded-xl border border-white/10 transition flex items-center justify-center gap-2">
+                <i data-lucide="upload" class="w-3.5 h-3.5 text-cyan-400"></i>
+                <span id="upload-btn-text">Upload & Set Active Resume</span>
               </button>
             </div>
           </div>
@@ -745,20 +846,32 @@
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="block text-zinc-400 mb-1">Full Name</label>
-                <input type="text" id="setting-name" value="Harsh Kumar Singh" class="w-full px-3.5 py-2.5 bg-zinc-950/80 border border-white/10 rounded-xl text-white">
+                <div class="relative">
+                  <i data-lucide="user" class="w-4 h-4 text-zinc-500 absolute left-3.5 top-3"></i>
+                  <input type="text" id="setting-name" value="Harsh Kumar Singh" class="w-full pl-10 pr-3.5 py-2.5 input-apple rounded-xl text-white">
+                </div>
               </div>
               <div>
                 <label class="block text-zinc-400 mb-1">Phone Number</label>
-                <input type="text" id="setting-phone" placeholder="+91 ..." class="w-full px-3.5 py-2.5 bg-zinc-950/80 border border-white/10 rounded-xl text-white">
+                <div class="relative">
+                  <i data-lucide="phone" class="w-4 h-4 text-zinc-500 absolute left-3.5 top-3"></i>
+                  <input type="text" id="setting-phone" placeholder="+91 ..." class="w-full pl-10 pr-3.5 py-2.5 input-apple rounded-xl text-white">
+                </div>
               </div>
             </div>
             <div>
               <label class="block text-zinc-400 mb-1">LinkedIn Profile URL</label>
-              <input type="text" id="setting-linkedin" placeholder="https://www.linkedin.com/in/..." class="w-full px-3.5 py-2.5 bg-zinc-950/80 border border-white/10 rounded-xl text-white">
+              <div class="relative">
+                <i data-lucide="linkedin" class="w-4 h-4 text-zinc-500 absolute left-3.5 top-3"></i>
+                <input type="text" id="setting-linkedin" placeholder="https://www.linkedin.com/in/..." class="w-full pl-10 pr-3.5 py-2.5 input-apple rounded-xl text-white">
+              </div>
             </div>
             <div>
               <label class="block text-zinc-400 mb-1">Current Experience Summary</label>
-              <input type="text" id="setting-company" placeholder="e.g. Software Engineer (1+ years)" class="w-full px-3.5 py-2.5 bg-zinc-950/80 border border-white/10 rounded-xl text-white">
+              <div class="relative">
+                <i data-lucide="briefcase" class="w-4 h-4 text-zinc-500 absolute left-3.5 top-3"></i>
+                <input type="text" id="setting-company" placeholder="e.g. Software Engineering (1+ years)" class="w-full pl-10 pr-3.5 py-2.5 input-apple rounded-xl text-white">
+              </div>
             </div>
           </div>
 
@@ -770,7 +883,7 @@
   </main>
 
   <!-- View Modal for Sent / Batch Email -->
-  <div id="view-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+  <div id="view-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
     <div data-lenis-prevent class="antigravity-card rounded-3xl max-w-2xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto border border-white/15">
       <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
         <h3 class="text-sm font-bold text-white" id="modal-title">Application Inspection</h3>
@@ -791,7 +904,7 @@
   </div>
 
   <!-- Custom Schedule Date & Time Modal -->
-  <div id="schedule-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+  <div id="schedule-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
     <div data-lenis-prevent class="antigravity-card rounded-3xl max-w-md w-full p-6 space-y-5 border border-white/15">
       <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
         <h3 class="text-sm font-bold text-white flex items-center gap-2">
@@ -808,7 +921,7 @@
         <div>
           <label class="block font-medium text-zinc-300 mb-1.5">Dispatch Date & Time</label>
           <input type="datetime-local" id="custom-schedule-datetime" 
-            class="w-full px-3.5 py-2.5 bg-zinc-950 border border-white/10 rounded-xl text-xs font-semibold text-white focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40">
+            class="w-full px-3.5 py-2.5 input-apple rounded-xl text-xs font-semibold text-white">
         </div>
       </div>
 
@@ -828,6 +941,6 @@
     JobwalaAI &bull; Apple Antigravity Architecture &bull; Designed for Harsh Kumar Singh
   </footer>
 
-  <script src="/static/app.js?v=4"></script>
+  <script src="/static/app.js?v=5"></script>
 </body>
 </html>
