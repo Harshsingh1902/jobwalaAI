@@ -1,3 +1,4 @@
+
 # 🚀 LinkedIn Job Application Mail Automator
 
 Automated Job Application & Outreach Web Application designed specifically for **Vibhu Dixit**.
@@ -66,3 +67,6 @@ ApplicationMail/
 ├── run.bat                 # 1-click launcher for Windows
 └── README.md               # Documentation
 ```
+=======
+# jobwalaAI
+>>>>>>> c00e9ac6a610150b0f1145c33d34f18b9ac706a1
