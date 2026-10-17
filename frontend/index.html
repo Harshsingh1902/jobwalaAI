@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkedIn Job Mail Automator - Vibhu Dixit</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Native Gmail View simulation */
+    .gmail-preview-box {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      color: #222222;
+      line-height: 1.5;
+      text-align: left;
+    }
+    .gmail-preview-box a {
+      color: #1155cc;
+      text-decoration: underline;
+    }
+    .gmail-preview-box b, .gmail-preview-box strong {
+      font-weight: 700;
+      color: #111111;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen font-sans antialiased flex flex-col">
+
+  <!-- Top Navigation Header -->
+  <header class="border-b border-slate-200 bg-white sticky top-0 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+          <i data-lucide="send" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            Job Mail Automator
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">Pro</span>
+          </h1>
+          <p class="text-xs text-slate-500">Automated LinkedIn Outreach for Vibhu Dixit</p>
+        </div>
+      </div>
+
+      <!-- Quick Status Indicators -->
+      <div class="flex items-center space-x-3">
+        <!-- SMTP Status Badge -->
+        <div id="smtp-badge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200 cursor-pointer" onclick="switchTab('settings')">
+          <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+          <span id="smtp-status-text">Checking SMTP...</span>
+        </div>
+
+        <!-- Resume Status Badge -->
+        <div id="resume-badge" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <i data-lucide="file-check" class="w-3.5 h-3.5"></i>
+          <span id="resume-status-text">Resume Attached</span>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="flex space-x-1 bg-slate-100 p-1 rounded-lg text-sm">
+          <button onclick="switchTab('outreach')" id="tab-btn-outreach" class="px-3 py-1.5 rounded-md font-medium text-slate-900 bg-white shadow-sm flex items-center gap-1.5 transition">
+            <i data-lucide="sparkles" class="w-4 h-4 text-blue-600"></i> Outreach
+          </button>
+          <button onclick="switchTab('history')" id="tab-btn-history" class="px-3 py-1.5 rounded-md font-medium text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition">
+            <i data-lucide="clock" class="w-4 h-4 text-slate-500"></i> History & Queue
+          </button>
+          <button onclick="switchTab('settings')" id="tab-btn-settings" class="px-3 py-1.5 rounded-md font-medium text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition">
+            <i data-lucide="settings" class="w-4 h-4 text-slate-500"></i> Settings
+          </button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Global Toast / Alert -->
+  <div id="toast-container" class="fixed top-20 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Main Content Area -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full">
+
+    <!-- ==================== TAB 1: OUTREACH STUDIO ==================== -->
+    <section id="tab-outreach" class="space-y-6">
+      
+      <!-- Top instruction banner for first-time / App password note -->
+      <div id="smtp-warning-banner" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start justify-between shadow-sm">
+        <div class="flex gap-3">
+          <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5"></i>
+          <div>
+            <h3 class="text-sm font-semibold text-amber-800">Gmail App Password Required to Send</h3>
+            <p class="text-xs text-amber-700 mt-0.5">
+              To send emails directly from <code class="font-bold">vibhudixit88@gmail.com</code>, generate a 16-character Google App Password and enter it in Settings.
+            </p>
+          </div>
+        </div>
+        <button onclick="switchTab('settings')" class="text-xs font-semibold px-3 py-1.5 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition flex items-center gap-1 flex-shrink-0">
+          Configure Now <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Left Column: Input Post & Extracted Meta (5 cols) -->
+        <div class="lg:col-span-5 space-y-5">
+          
+          <!-- Card: Input Post -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
+            <div class="flex items-center justify-between">
+              <label class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                <i data-lucide="clipboard-paste" class="w-4 h-4 text-blue-600"></i>
+                Paste LinkedIn Post OR Multiple Recruiter Emails
+              </label>
+              <button onclick="clearInput()" class="text-xs text-slate-400 hover:text-slate-600 flex items-center gap-1 transition">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear
+              </button>
+            </div>
+
+            <textarea id="raw-post-input" rows="6" 
+              placeholder="Paste either:&#10;1) A LinkedIn job recruitment post&#10;2) A single recruiter email (e.g. hr@company.com)&#10;3) MULTIPLE emails separated by newlines or commas for batch sending/scheduling!" 
+              class="w-full text-xs font-mono bg-slate-50 border border-slate-200 rounded-xl p-3.5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-y"></textarea>
+
+            <div class="flex items-center gap-2">
+              <button onclick="processInput()" id="btn-generate" class="flex-1 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-sm hover:shadow transition flex items-center justify-center gap-2">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                <span>Analyze & Generate Draft</span>
+              </button>
+            </div>
+            
+            <p class="text-[11px] text-slate-400 text-center">
+              💡 Tip: If you enter only an email address, it automatically creates a <b>Software Engineer</b> application.
+            </p>
+          </div>
+
+          <!-- Card: Extracted Fields (Editable) -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                <i data-lucide="sliders" class="w-4 h-4 text-indigo-600"></i>
+                Extracted Information
+              </h3>
+              <span id="detected-mode-badge" class="text-[11px] font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-600">
+                Ready
+              </span>
+            </div>
+
+            <div class="space-y-3 text-xs">
+              <div>
+                <label class="block text-slate-500 font-medium mb-1">Recruiter Email <span class="text-red-500">*</span></label>
+                <div class="relative">
+                  <i data-lucide="mail" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+                  <input type="email" id="field-email" placeholder="e.g. recruiter@company.com" 
+                    class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-slate-500 font-medium mb-1">Recruiter Name</label>
+                  <input type="text" id="field-name" placeholder="e.g. Twinkle or Priya" 
+                    class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium">
+                </div>
+                <div>
+                  <label class="block text-slate-500 font-medium mb-1">Target Company</label>
+                  <input type="text" id="field-company" placeholder="e.g. GammaEdge Technologies" 
+                    class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-slate-500 font-medium mb-1">Role / Position</label>
+                  <input type="text" id="field-role" placeholder="e.g. Python Developer" 
+                    class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium">
+                </div>
+                <div>
+                  <label class="block text-slate-500 font-medium mb-1">Required Exp (Years)</label>
+                  <input type="number" id="field-exp" placeholder="e.g. 1 or 5" 
+                    class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium">
+                </div>
+              </div>
+
+              <button onclick="regenerateFromFields()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg transition flex items-center justify-center gap-1.5 mt-2">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                Update Draft with These Fields
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Live Email Preview & Send Studio (7 cols) -->
+        <div class="lg:col-span-7 space-y-4">
+          <div id="single-studio-box" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+            
+            <!-- Email Studio Header with View Toggles -->
+            <div class="p-3.5 border-b border-slate-200 bg-slate-50/80 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i data-lucide="mail-check" class="w-4 h-4 text-blue-600"></i>
+                <h3 class="text-sm font-bold text-slate-800">Email Studio</h3>
+              </div>
+              <div class="flex items-center gap-2">
+                <!-- Preview / Edit Switcher -->
+                <div class="bg-slate-200/80 p-0.5 rounded-lg flex items-center text-xs font-semibold">
+                  <button onclick="setPreviewMode('visual')" id="btn-mode-visual" class="px-2.5 py-1 rounded-md bg-white text-slate-800 shadow-xs flex items-center gap-1 transition">
+                    <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-600"></i> Gmail View
+                  </button>
+                  <button onclick="setPreviewMode('edit')" id="btn-mode-edit" class="px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-800 flex items-center gap-1 transition">
+                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit Text
+                  </button>
+                </div>
+                <button onclick="copyEmailToClipboard()" class="text-xs px-2.5 py-1 bg-white border border-slate-200 rounded-md hover:bg-slate-50 text-slate-700 font-medium flex items-center gap-1 shadow-2xs transition">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy
+                </button>
+              </div>
+            </div>
+
+            <!-- Subject Line -->
+            <div class="p-4 border-b border-slate-100">
+              <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Subject Line</label>
+              <input type="text" id="email-subject" 
+                placeholder="Application for Python Developer Role - GammaEdge Technologies" 
+                class="w-full px-3 py-2 text-sm font-semibold text-slate-800 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+
+            <!-- Email Body: Visual View (Default, Exact Gmail appearance) -->
+            <div id="visual-preview-container" class="p-5 flex-1 min-h-[360px] bg-white border-b border-slate-100">
+              <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center justify-between">
+                <span>Genuine Gmail Formatting (Full Width &bull; Bold Key Highlights)</span>
+                <span class="text-emerald-600 font-medium flex items-center gap-1">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Natural Layout
+                </span>
+              </div>
+              <div id="visual-preview-content" class="gmail-preview-box p-4 bg-slate-50/50 rounded-xl border border-slate-100 whitespace-pre-wrap">
+                <!-- Live HTML Preview with bold keywords -->
+                Your personalized email will appear here...
+              </div>
+            </div>
+
+            <!-- Email Body Editor (Hidden by default, shown on 'Edit Text' tab) -->
+            <div id="raw-edit-container" class="p-4 flex-1 hidden">
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Edit Email Text (Supports &lt;b&gt;bold&lt;/b&gt; or **bold**)</label>
+                <button onclick="wrapSelectionWithBold()" class="text-xs px-2 py-0.5 bg-slate-100 hover:bg-slate-200 rounded font-bold text-slate-700">
+                  <b>B</b> Bold Selection
+                </button>
+              </div>
+              <textarea id="email-body" rows="15" 
+                oninput="updateVisualPreviewFromEditor()"
+                placeholder="Your personalized email draft will appear here ready to review and send..." 
+                class="w-full p-4 text-xs font-mono text-slate-800 bg-slate-50 border border-slate-200 rounded-xl leading-relaxed focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none resize-y"></textarea>
+            </div>
+
+            <!-- Attachment Banner & Action Bar -->
+            <div class="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div class="flex items-center gap-2 text-xs text-slate-600 w-full sm:w-auto">
+                <div class="p-1.5 rounded-lg bg-red-100 text-red-700 flex items-center justify-center">
+                  <i data-lucide="file-text" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <span class="font-semibold text-slate-800 block truncate" id="card-resume-name">VibhuDixit_Resume.pdf</span>
+                  <span class="text-[11px] text-slate-500" id="card-resume-size">Attached automatically</span>
+                </div>
+              </div>
+
+              <!-- Action Buttons: Schedule 10 AM, Custom Time, Send Now -->
+              <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+                <button onclick="scheduleSingle10AM()" id="btn-schedule-10am" 
+                  class="px-3.5 py-2 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-semibold rounded-xl shadow-xs transition flex items-center gap-1.5"
+                  title="Queue email to send automatically at 10:00 AM">
+                  <i data-lucide="clock" class="w-4 h-4 text-amber-600"></i>
+                  <span>Schedule for 10:00 AM</span>
+                </button>
+
+                <button onclick="openCustomScheduleModal('single')" 
+                  class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition flex items-center gap-1"
+                  title="Pick a custom date and time">
+                  <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-500"></i>
+                  <span>Custom Time</span>
+                </button>
+
+                <button onclick="sendApplicationNow()" id="btn-send-email" 
+                  class="px-5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold text-xs rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-1.5">
+                  <i data-lucide="send" class="w-4 h-4"></i>
+                  <span id="send-btn-text">Send Now</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Batch Outreach Studio Box (Visible when multiple emails pasted) -->
+          <div id="batch-studio-box" class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col p-5 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+              <div class="flex items-center gap-2">
+                <div class="p-1.5 rounded-lg bg-indigo-50 text-indigo-600">
+                  <i data-lucide="layers" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                    Batch Outreach Hub
+                    <span id="batch-count-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800">0 Recipients</span>
+                  </h3>
+                  <p class="text-[11px] text-slate-400">Personalized applications generated for each recipient</p>
+                </div>
+              </div>
+
+              <!-- Batch Action Buttons -->
+              <div class="flex flex-wrap items-center gap-2">
+                <button onclick="scheduleBatch10AM()" id="btn-batch-10am" 
+                  class="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-semibold rounded-lg shadow-xs transition flex items-center gap-1.5"
+                  title="Queue all emails to send at morning 10:00 AM">
+                  <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-600"></i>
+                  <span>Schedule All 10 AM</span>
+                </button>
+
+                <button onclick="openCustomScheduleModal('batch')" 
+                  class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-1">
+                  <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-500"></i>
+                  <span>Custom Time</span>
+                </button>
+
+                <button onclick="sendBatchNow()" id="btn-batch-send" 
+                  class="px-4 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-semibold rounded-lg shadow-sm transition flex items-center gap-1.5">
+                  <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                  <span id="batch-send-text">Send All Now</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Batch Progress Bar (Hidden during idle) -->
+            <div id="batch-progress-container" class="hidden space-y-1.5 bg-slate-50 p-3 rounded-xl border border-slate-200">
+              <div class="flex justify-between text-xs font-semibold text-slate-700">
+                <span id="batch-progress-status">Sending batch...</span>
+                <span id="batch-progress-percent">0%</span>
+              </div>
+              <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                <div id="batch-progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Batch Recipients Table -->
+            <div class="overflow-x-auto rounded-xl border border-slate-100 max-h-[420px] overflow-y-auto">
+              <table class="w-full text-left text-xs text-slate-600">
+                <thead class="bg-slate-50 text-[11px] font-bold uppercase text-slate-400 border-b border-slate-100 sticky top-0">
+                  <tr>
+                    <th class="p-2.5">#</th>
+                    <th class="p-2.5">Recruiter Email</th>
+                    <th class="p-2.5">Name</th>
+                    <th class="p-2.5">Company</th>
+                    <th class="p-2.5 text-right">Draft</th>
+                  </tr>
+                </thead>
+                <tbody id="batch-table-body" class="divide-y divide-slate-100">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: SENT HISTORY ==================== -->
+    <section id="tab-history" class="hidden space-y-4">
+      <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="history" class="w-5 h-5 text-blue-600"></i>
+              Application Outreach History
+            </h2>
+            <p class="text-xs text-slate-500">Track and manage all emails sent through this system</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="text" id="history-search" oninput="filterHistoryTable()" placeholder="Search company, role or email..." 
+              class="text-xs px-3 py-1.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button onclick="loadHistory()" class="p-1.5 text-slate-500 hover:text-slate-800 border border-slate-200 rounded-lg hover:bg-slate-50 transition" title="Refresh">
+              <i data-lucide="rotate-cw" class="w-4 h-4"></i>
+            </button>
+            <button onclick="clearAllHistoryConfirm()" class="text-xs px-3 py-1.5 text-red-600 hover:bg-red-50 border border-red-200 rounded-lg font-medium transition">
+              Clear History
+            </button>
+          </div>
+        </div>
+
+        <!-- History Table -->
+        <div class="overflow-x-auto rounded-xl border border-slate-100">
+          <table class="w-full text-left text-xs text-slate-600">
+            <thead class="bg-slate-50 text-[11px] font-bold uppercase text-slate-400 border-b border-slate-100">
+              <tr>
+                <th class="p-3">Date & Time</th>
+                <th class="p-3">Recruiter Email</th>
+                <th class="p-3">Company</th>
+                <th class="p-3">Role</th>
+                <th class="p-3">Status / Delivery Time</th>
+                <th class="p-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="history-table-body" class="divide-y divide-slate-100">
+              <tr>
+                <td colspan="6" class="p-6 text-center text-slate-400">Loading history...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: SETTINGS ==================== -->
+    <section id="tab-settings" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Card 1: Gmail SMTP Setup -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+          <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
+            <div class="p-2 bg-red-50 text-red-600 rounded-xl">
+              <i data-lucide="mail" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-slate-900">Gmail Sending Configuration</h3>
+              <p class="text-xs text-slate-500">Configure your Gmail credentials for sending applications</p>
+            </div>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="block font-medium text-slate-600 mb-1">Sender Email</label>
+              <input type="email" id="setting-sender-email" value="vibhudixit88@gmail.com" 
+                class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg font-medium text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label class="font-medium text-slate-600">Gmail App Password (16 characters)</label>
+                <a href="https://myaccount.google.com/apppasswords" target="_blank" class="text-[11px] text-blue-600 hover:underline flex items-center gap-0.5">
+                  Get App Password <i data-lucide="external-link" class="w-3 h-3"></i>
+                </a>
+              </div>
+              <div class="relative">
+                <input type="password" id="setting-app-password" placeholder="e.g. xxxx xxxx xxxx xxxx" 
+                  class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg font-mono focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+                  <i data-lucide="eye" id="pwd-eye-icon" class="w-4 h-4"></i>
+                </button>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-1">
+                Steps: 1. Go to Google Account > Security > 2-Step Verification. 2. Scroll to "App passwords". 3. Create one named "Job Outreach" and paste the 16 characters here.
+              </p>
+            </div>
+
+            <div class="pt-2 flex items-center gap-2">
+              <button onclick="testSmtpConnection()" id="btn-test-smtp" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg transition flex items-center gap-1.5">
+                <i data-lucide="activity" class="w-3.5 h-3.5"></i> Test Connection
+              </button>
+              <button onclick="saveSettingsFromUi()" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition flex items-center gap-1.5">
+                <i data-lucide="save" class="w-3.5 h-3.5"></i> Save Settings
+              </button>
+            </div>
+
+            <div id="smtp-test-result" class="hidden p-3 rounded-lg text-xs"></div>
+          </div>
+        </div>
+
+        <!-- Card 2: Resume Manager -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+          <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
+            <div class="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+              <i data-lucide="file-text" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-slate-900">Resume Attachment</h3>
+              <p class="text-xs text-slate-500">Manage the PDF resume attached to every email</p>
+            </div>
+          </div>
+
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50/50 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-xs font-bold text-slate-800 block" id="setting-resume-filename">VibhuDixit_Resume.pdf</span>
+                <span class="text-[11px] text-slate-500" id="setting-resume-size">Checking file...</span>
+              </div>
+              <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 font-semibold text-[11px] rounded-full">
+                Active Attachment
+              </span>
+            </div>
+
+            <div class="border-t border-slate-200 pt-3">
+              <label class="block text-xs font-medium text-slate-600 mb-2">Upload Updated Resume (PDF only)</label>
+              <input type="file" id="resume-file-input" accept=".pdf" 
+                class="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+              <button onclick="uploadNewResume()" class="mt-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg transition flex items-center gap-1.5">
+                <i data-lucide="upload" class="w-3.5 h-3.5"></i> Upload & Set Active
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 3: Personal Profile Details -->
+          <div class="border-t border-slate-100 pt-3 space-y-3 text-xs">
+            <h4 class="font-bold text-slate-800">Sender Profile Defaults</h4>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-slate-500 mb-1">Full Name</label>
+                <input type="text" id="setting-name" value="Vibhu Dixit" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg">
+              </div>
+              <div>
+                <label class="block text-slate-500 mb-1">Phone Number</label>
+                <input type="text" id="setting-phone" value="+91 7500211114" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg">
+              </div>
+            </div>
+            <div>
+              <label class="block text-slate-500 mb-1">LinkedIn Profile URL</label>
+              <input type="text" id="setting-linkedin" value="https://www.linkedin.com/in/vibhu-dixit-b42a11251/" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg">
+            </div>
+            <div>
+              <label class="block text-slate-500 mb-1">Current Experience Summary</label>
+              <input type="text" id="setting-company" value="Meridian Solutions Pvt. Ltd. (Microsoft Gold Partner)" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg">
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- View Modal for Sent Email -->
+  <div id="view-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full border border-slate-200 shadow-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-sm font-bold text-slate-900" id="modal-title">Application Details</h3>
+        <button onclick="closeModal()" class="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="text-xs space-y-2 text-slate-600">
+        <p><b>To:</b> <span id="modal-to"></span></p>
+        <p><b>Subject:</b> <span id="modal-subject" class="font-semibold text-slate-800"></span></p>
+        <p><b>Date / Status:</b> <span id="modal-date"></span></p>
+        <div class="mt-3">
+          <b class="block mb-1 text-slate-700">Body:</b>
+          <div id="modal-body" class="gmail-preview-box p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Schedule Date & Time Modal -->
+  <div id="schedule-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full border border-slate-200 shadow-2xl p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="calendar" class="w-4 h-4 text-amber-600"></i>
+          Schedule Delivery Time
+        </h3>
+        <button onclick="closeScheduleModal()" class="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <p class="text-slate-600">Pick the exact date and time when this application should be automatically sent:</p>
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">Delivery Date & Time</label>
+          <input type="datetime-local" id="custom-schedule-datetime" 
+            class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+      </div>
+
+      <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+        <button onclick="closeScheduleModal()" class="px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg font-medium transition">
+          Cancel
+        </button>
+        <button onclick="confirmCustomSchedule()" class="px-4 py-2 text-xs bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg shadow-sm transition flex items-center gap-1.5">
+          <i data-lucide="clock" class="w-3.5 h-3.5"></i> Confirm Schedule
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="py-4 text-center text-xs text-slate-400 border-t border-slate-200 bg-white">
+    LinkedIn Job Mail Automator &bull; Designed for Vibhu Dixit &bull; 1 Year Exp @ Meridian Solutions
+  </footer>
+
+  <script src="/static/app.js?v=2"></script>
+</body>
+</html>
