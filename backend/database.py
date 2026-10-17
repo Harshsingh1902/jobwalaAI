@@ -1,9 +1,13 @@
+import os
 import sqlite3
 from pathlib import Path
 from datetime import datetime
 from typing import List, Dict, Any, Optional
 
-DB_FILE = Path(__file__).resolve().parent.parent / "applications.db"
+if os.getenv("VERCEL"):
+    DB_FILE = Path("/tmp/applications.db")
+else:
+    DB_FILE = Path(__file__).resolve().parent.parent / "applications.db"
 
 def get_connection():
     conn = sqlite3.connect(DB_FILE)

@@ -28,10 +28,13 @@ app.add_middleware(
 
 FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
 
+import os
+
 @app.on_event("startup")
 def startup_event():
     init_db()
-    start_scheduler()
+    if not os.getenv("VERCEL"):
+        start_scheduler()
 
 # --- Request Models ---
 class ParseRequest(BaseModel):
@@ -330,7 +333,9 @@ async def api_upload_resume(file: UploadFile = File(...)):
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF resume files are supported.")
     
-    dest_path = RESUMES_DIR / file.filename
+    target_dir = Path("/tmp/resumes") if os.getenv("VERCEL") else RESUMES_DIR
+    target_dir.mkdir(parents=True, exist_ok=True)
+    dest_path = target_dir / file.filename
     with open(dest_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
         
@@ -345,5 +350,6 @@ if FRONTEND_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
 
     @app.get("/")
+    @app.get("/index.html")
     def serve_index():
         return FileResponse(FRONTEND_DIR / "index.html")
