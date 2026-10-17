@@ -5,8 +5,11 @@ let currentBatchItems = [];
 let customScheduleTarget = "single"; // "single" or "batch"
 let next10amDefault = "";
 
+let lenisInstance = null;
+
 document.addEventListener("DOMContentLoaded", () => {
     lucide.createIcons();
+    initLenis();
     checkSmtpStatus();
     checkResumeStatus();
     loadSettings();
@@ -27,6 +30,53 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+// Lenis Buttery Momentum Smooth Scrolling & Layered Parallax
+function initLenis() {
+    if (typeof Lenis !== "undefined") {
+        try {
+            lenisInstance = new Lenis({
+                lerp: 0.08,
+                smoothWheel: true,
+                wheelMultiplier: 1.05,
+            });
+
+            function raf(time) {
+                lenisInstance.raf(time);
+                requestAnimationFrame(raf);
+            }
+            requestAnimationFrame(raf);
+
+            lenisInstance.on("scroll", (e) => {
+                // Update top progress bar
+                const progressEl = document.getElementById("scroll-progress-bar");
+                if (progressEl) {
+                    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+                    const pct = maxScroll > 0 ? (e.animatedScroll / maxScroll) * 100 : 0;
+                    progressEl.style.width = `${Math.min(100, Math.max(0, pct))}%`;
+                }
+
+                // Apple parallax depth layers
+                const parallaxEls = document.querySelectorAll("[data-parallax]");
+                parallaxEls.forEach(el => {
+                    const speed = parseFloat(el.getAttribute("data-parallax") || "0.05");
+                    const offset = e.animatedScroll * speed;
+                    el.style.transform = `translate3d(0, ${offset}px, 0)`;
+                });
+            });
+        } catch (err) {
+            console.warn("Lenis initialization:", err);
+        }
+    }
+}
+
+function scrollToStudio() {
+    if (lenisInstance) {
+        lenisInstance.scrollTo("#studio-workspace", { offset: -70, duration: 1.1 });
+    } else {
+        document.getElementById("studio-workspace")?.scrollIntoView({ behavior: "smooth" });
+    }
+}
+
 // Antigravity 3D Tilt & Weightless Physics on cards
 function initAntigravityPhysics() {
     const cards = document.querySelectorAll('.antigravity-card');
@@ -37,8 +87,8 @@ function initAntigravityPhysics() {
             const y = e.clientY - rect.top;
             const centerX = rect.width / 2;
             const centerY = rect.height / 2;
-            const rotateX = ((y - centerY) / centerY) * -3.2;
-            const rotateY = ((x - centerX) / centerX) * 3.2;
+            const rotateX = ((y - centerY) / centerY) * -3.5;
+            const rotateY = ((x - centerX) / centerX) * 3.5;
             
             card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-2px)`;
         });
@@ -78,6 +128,7 @@ function switchTab(tabName) {
         loadHistory();
     }
     lucide.createIcons();
+    scrollToStudio();
 }
 
 // Preview mode toggle: Visual (Gmail view) vs Edit Text
